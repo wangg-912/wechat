@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Login</title>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../lib/ui.css">
+<link rel="stylesheet" href="../css/jquery-weui.css">
+<link rel="stylesheet" href="../css/iconfont.min.css">
+<link rel="stylesheet" href="css/demos.css">
+  <style>
+    body{
+      background-image: url("../svgs/bg.svg");
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    header>span{
+      background-image: url("../svgs/logo.svg");
+      background-repeat: no-repeat;
+      background-size: 100%;
+      width: 3.65rem;
+      height: 4.8rem;
+      display: inline-block;
+    }
+
+    .weui-grids{
+      padding-top: 3.4rem;
+      text-align: center;
+    }
+    .weui-input{
+      height: 2.3rem;
+      border: 1px solid #0099ff;
+      border-radius: 2.5rem;
+      width: 75%;
+      padding-left: 4rem;
+      color: #0099ff;
+    }
+    input::input-placeholder,
+    input::-webkit-input-placeholder{
+      color: #0099ff;
+    }
+    .weui-msg__opr-area{
+      padding: 0 2rem;
+    }
+    #login{
+      width: 75%;
+      height: 2.3rem;
+      border-radius: 2.5rem;
+      background: #0099ff;
+      display: inline-block;
+      padding: 0 2rem;
+      line-height: 2.3rem;
+      color: #fff;
+      font-size: 0.9rem ;
+    }
+    .w_p{
+      position: relative;
+    }
+    .w_p>i{
+      color: #0099ff;
+      position: absolute;
+      font-size: 1.3rem;
+      top: 0.15rem;
+      left: 1.5rem;
+    }
+    footer{
+      padding-top: 0.5rem ;
+    }
+    footer>a,footer>span{
+      color: #0099ff;
+    }
+    h2{
+      font-weight: 400;
+      font-size: 0.8rem;
+      word-wrap: break-word;
+      word-break: break-all;
+      color: #fff;
+      margin-bottom: 7.5rem;
+    }
+    .msg{
+      display: inline-block;
+      text-align: left;
+      width: 100%;
+      padding-left: 1.6rem;
+      color: #ff6e07;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+<div class="weui-grids">
+  <header>
+    <span class="userPortrait"></span>
+  </header>
+  <h2>天津天堰科技股份有限公司</h2>
+  <section class="weui-msg__opr-area">
+    <p class="w_p" style="margin-bottom: 0.9rem;" id="2">
+      <i class="icon iconfont icon-kehu"></i>
+      <input class="weui-input" type="tel" placeholder="请输入手机号码" id="phone">
+    </p>
+    <p class="w_p" id="1">
+      <i class="icon iconfont icon-suoding"></i>
+      <input class="weui-input" type="password" placeholder="请输入密码" id="pwd">
+    </p>
+    <span class="msg"></span>
+    <p>
+      <a href="javascript:;" id="login" onclick="loginFn()">登&nbsp;录</a>
+    </p>
+    <footer >
+      <a href="javascript:;" onclick="entranceFn()">校外人员入口</a>
+      <span>丨</span>
+      <a href="javascript:;" onclick="forgetFn()">忘记密码?</a>
+    </footer>
+  </section>
+</div>
+<script src="../lib/jquery-2.1.4.js"></script>
+<script src="../lib/fastclick.js"></script>
+<script>
+  $(function () {
+    FastClick.attach(document.body);
+  });
+</script>
+<script src="../js/jquery-weui.js"></script>
+<script src="../lib/qrcode.min.js"></script>
+<script src="../lib/helper/to-sjis.js"></script>
+</body>
+<script>
+    function loginFn() {
+        var tell=$("#phone").val();
+        var pwd = $("#pwd").val();
+        if(tell == '' || !isMobilePhone(tell)) {
+            return $.toptip('请输入正确的手机号码', 'error');
+            // showTooltips('请输入正确的手机号码!');
+        }
+        if(pwd == ''){
+            return $.toptip('请输入密码', 'error');
+            // showTooltips('请输入密码!');
+        }
+        if (!isPassword(pwd)) {
+            return $.toptip('只能输入6-20个字母、数字、下划线', 'error');
+            // showTooltips('只能输入6-20个字母、数字、下划线!');
+        }
+        // showTooltips('校验通过!',true);
+        $.toptip('校验通过', 'success');
+    }
+    function isMobilePhone(val) {
+        if(val.search(/^(\+\d{2,3})?\d{11}$/) == -1)            return false;
+        else
+            return true;
+    }
+
+    function isPassword(val) {
+        var p=/^(\w){6,20}$/;
+        if (!p.exec(val))
+            return false;
+        else
+            return true
+    }
+
+    function showTooltips(str,bool){
+        $("#pwd").focus();
+        $(".msg").empty().text(str);
+        $(".msg").css("color",bool?'#4CAF50':"#ff6e07");
+    }
+
+    /**
+     * 忘记密码
+     */
+    function forgetFn() {
+        //todo
+    }
+
+    /**
+     * 校外人员入口
+     */
+    function entranceFn() {
+        //todo
+    }
+</script>
+
+</html>

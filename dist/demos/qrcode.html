@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WeUI</title>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../lib/ui.css">
+<link rel="stylesheet" href="../css/jquery-weui.css">
+<link rel="stylesheet" href="../css/iconfont.min.css">
+<link rel="stylesheet" href="css/demos.css">
+</head>
+
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">二维码</h1>
+    </header>
+    <div class="page-bd-15">
+        <a href="javascript:;" class="weui-btn weui-btn_primary" data-role="qrcode">生成名片二维码</a>
+    </div>
+    <div style="text-align: center;margin-top:20px;">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script src="../lib/jquery-2.1.4.js"></script>
+<script src="../lib/fastclick.js"></script>
+<script>
+  $(function () {
+    FastClick.attach(document.body);
+  });
+</script>
+<script src="../js/jquery-weui.js"></script>
+<script src="../lib/qrcode.min.js"></script>
+<script src="../lib/helper/to-sjis.js"></script>
+    <script>
+        $(function () {
+            $('[data-role="qrcode"]').on("click", function () {
+                return qr();
+            });
+        });
+
+        function qr() {
+            QRCode.toCanvas(
+                document.getElementById("canvas"),
+                "Hello Test", {
+                    version: 10,
+                    errorCorrectionLevel: "H",
+                    maskPattern: 7
+                },
+                function (error) {
+                    if (error) console.error(error);
+                    console.log("success!");
+                }
+            );
+        }
+    </script>
+</body>
+
+</html>

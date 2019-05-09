@@ -1,0 +1,221 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    list-style: none outside none;
+}
+body {
+    font: 12px/1.5 SimHei, verdana, helvetica, arial, sans-serif;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    min-width: 900px;
+    min-height: 768px;
+
+}
+input:-webkit-autofill{
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+}
+.content-box{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image:  url("../tellyes_images/desktop_bg.jpg");
+    background-size: cover;
+    background-position:center;
+    background-repeat: no-repeat;
+}
+.nav{
+    position: absolute;
+    top:0;
+    width: 100%;
+    height: 78px;
+    background: #fafafa;
+}
+.footer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background: #fafafa;
+}
+.form-box{
+    position: absolute;
+    width: 400px;
+    height: 460px;
+    top:20%;
+    right: 13.6%;
+    border-radius:8px ;
+    background: #ffffff;
+    -webkit-box-shadow:  0px 0px 5px #DBDBDB;
+    -moz-box-shadow: 0px 0px 5px #DBDBDB;
+    box-shadow:  0px 0px 5px #DBDBDB;
+    /*box-shadow:0 0 1px #B3B3B3 inset;*/
+    /*box-shadow: #B3B3B3;*/
+}
+.logo-box{
+    float: left;
+    height: 74px;
+    width: 100%;
+    margin-top: 2px;
+    background:url("../tellyes_images/desktop_logo.png");
+    background-size:auto 74px;
+    background-repeat: no-repeat;
+}
+.nav-title-box{
+    position: absolute;
+    width: 570px;
+    height: 78px;
+    top: 50%;
+    margin-top: -39px;
+    margin-left: 10px;
+}
+.left-p{
+    float: left;
+    height: 40px;
+    margin-left: 3px;
+    margin-top: 11px;
+    font-size: 14px;
+    color: #333333;
+}
+.left-p p{
+    line-height: 18px;
+}
+.form-title{
+    font-size: 20px;
+    color: #1890ff;
+    text-align: center;
+    margin-top: 25px;
+}
+.errorMsg{
+    position: absolute;
+    width:100%;
+    margin-top: 5px;
+    font-size: 14px;
+    color:red
+}
+.right-p{
+    float: left;
+    width: 218px;
+    height:41px;
+    margin-top: 12px;
+}
+.school-name{
+    line-height: 25px;
+    font-size: 22px;
+    color: #333333;
+}
+.english-name{
+    line-height: 12px;
+    font-size: 12px;
+    color: #333333;
+}
+.footer p {
+    text-align: center;
+    font-size: 14px;
+    line-height: 60px;
+    color: #333333;
+    background: #fafafa;
+}
+.form-box form{
+    position: relative;
+    width: 270px;
+    height: 220px;
+    margin: 28px auto;
+}
+.input-common{
+    width: 240px;
+    height: 34px;
+    margin: 0 auto;
+    border: 1px #d0d0d0 solid;
+    border-radius: 5px;
+    font-size: 14px;
+    padding-left: 34px;
+}
+.input-common input{
+    width: 235px;
+    height: 34px;
+}
+.account-background{
+    background:url("../tellyes_images/desktop_user.png") no-repeat;
+    background-size:16px 18px;
+    background-position:8px 7px;
+}
+.password {
+    margin-top: 29px;
+}
+.password-background{
+    background:url("../tellyes_images/desktop_password.png") no-repeat;
+    background-size:16px 18px;
+    background-position:8px 7px;
+}
+form div{
+    width:100%;
+    height:20px;
+    margin-top: 43px;
+    font-size: 14px;
+}
+.record-password{
+    float: left;
+    margin-left: 3px;
+    color: #b6b6b6;
+}
+.forget-password{
+    float: right;
+    color: #fc7a7a;
+}
+.submit-btn{
+    width: 100%;
+    height:45px;
+    color: #ffffff;
+    margin-top: 20px;
+    background: #1890ff;
+    border-radius: 5px;
+}
+.submit-btn:active{
+    box-shadow: 0 0 5px #06709f;
+    /*outline: none;*/
+}
+.tips-box{
+    width: 270px;
+    height: auto;
+    margin: 28px auto;
+}
+.tip-title{
+    font-size: 14px;
+    color:#ff7e00 ;
+}
+.tips-content{
+    font-size: 13px;
+    line-height:22px;
+    color: #999999;
+}
+#loginForm .input-common:hover {
+    border-color: #1d829f;
+}
+
+.clone-shadow{
+    border-color: #1d829f;
+    box-shadow: 0 0 5px #06709f;
+}
+.check-box{
+    width: 15px;
+    height: 15px;
+    margin-top: 3px;
+    float: left
+}
+.cut-line{
+    float: left;
+    font-size: 24px;
+    color:#333333;
+    line-height:60px;
+    margin:0 10px
+}
+.submit-btn {
+    cursor:pointer
+}
+.submit-btn:active{
+    box-shadow: 0 0 5px #06709f;
+}

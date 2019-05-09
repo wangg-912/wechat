@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WeUI</title>
+    <% include _head.html %>
+</head>
+
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">图表</h1>
+    </header>
+    <div id="container">
+        <div id="doughnut" style="height:240px;"></div>
+        <div id="pie" style="height:240px;"></div>
+        <div id="bar" style="height:360px;"></div>
+        <div id="bar1" style="height:360px;"></div>
+        <div id="gauge" style="height:300px;"></div>
+    </div>
+
+    <% include _foot.html %>
+    <script src="../lib//chart//echarts.min.js"></script>
+    <script>
+        creataDoughnut();
+        createPie();
+        createBar();
+        createBar1();
+        createGauge();
+
+        function creataDoughnut() {
+            var dom = document.getElementById("doughnut");
+            var myChart = echarts.init(dom);
+            var app = {};
+
+            option = null;
+            app.title = "环形图";
+            option = {
+                baseOption: {
+                    title: {
+                        text: "环状统计",
+                        x: "center",
+                        y: "top"
+                    },
+                    tooltip: {
+                        trigger: "item",
+                        formatter: "{a} {b}: {c} ({d}%)"
+                    },
+                    color: ["#19be6b", "#808695"],
+                    legend: {
+                        orient: "horizontal",
+                        y: "bottom",
+                        bottom: 0,
+                        data: ["已办理", "未办理"]
+                    },
+                    series: [{
+                        name: "访问来源",
+                        type: "pie",
+                        radius: ["50%", "70%"],
+
+                        label: {
+                            normal: {
+                                formatter: "{b}:{c}\n {per|{d}%} ",
+                                borderWidth: 1,
+                                rich: {
+                                    a: {
+                                        color: "#999",
+                                        lineHeight: 22,
+                                        align: "center"
+                                    },
+
+                                    hr: {
+                                        borderColor: "#aaa",
+                                        width: "100%",
+                                        borderWidth: 0.5,
+                                        height: 0
+                                    },
+                                    b: {
+                                        fontSize: 16,
+                                        lineHeight: 33
+                                    }
+                                }
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: "24",
+                                    fontWeight: "bold"
+                                }
+                            }
+                        },
+
+                        data: [{
+                                value: 335,
+                                name: "已办理"
+                            },
+                            {
+                                value: 60,
+                                name: "未办理"
+                            }
+                        ]
+                    }]
+                }
+            };
+
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        }
+
+        function createPie() {
+            var dom = document.getElementById("pie");
+            var myChart = echarts.init(dom);
+            var app = {};
+
+            option = null;
+            app.title = "饼状图";
+            option = {
+                title: {
+                    text: "饼状统计",
+                    x: "center",
+                    y: "top"
+                },
+                tooltip: {
+                    trigger: "item",
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                color: ["#2d8cf0", "#808695"],
+                legend: {
+                    orient: "horizontal",
+                    y: "bottom",
+                    bottom: 0,
+                    data: ["已办理", "未办理"]
+                },
+                series: [{
+                    type: "pie",
+                    radius: "55%",
+                    center: ["50%", "60%"],
+                    label: {
+                        normal: {
+                            formatter: "{b}:{c}\n {d}% ",
+                            borderWidth: 1
+                        }
+                    },
+                    data: [{
+                            value: 320,
+                            name: "已办理"
+                        },
+                        {
+                            value: 96,
+                            name: "未办理"
+                        }
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: "rgba(0, 0, 0, 0.5)"
+                        }
+                    }
+                }]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        }
+
+        function createBar() {
+            var dom = document.getElementById("bar");
+            var myChart = echarts.init(dom);
+            var app = {};
+
+            option = null;
+            app.title = "柱状图";
+            option = {
+                title: {
+                    text: "柱状统计",
+                    x: "center",
+                    y: "top"
+                },
+                tooltip: {
+                    trigger: "axis",
+                    axisPointer: {
+                        type: "shadow"
+                    }
+                },
+                legend: {
+                    orient: "horizontal",
+                    y: "bottom",
+                    bottom: 0,
+                    data: []
+                },
+                grid: {
+                    left: "3%",
+                    right: "4%",
+                    bottom: "3%",
+                    containLabel: true
+                },
+                xAxis: {
+                    type: "value",
+                    boundaryGap: [0, 0.01],
+                    axisLabel: {
+                        rotate: 45
+                    }
+                },
+                yAxis: {
+                    type: "category",
+                    data: ["检录通知书", "班级分配", "宿舍分配", "财务缴费"]
+                },
+                color: ["#19be6b"],
+                series: [{
+                    type: "bar",
+                    barWidth: 26,
+                    data: [201, 302, 205, 550]
+                }]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        }
+
+        function createBar1() {
+            var dom = document.getElementById("bar1");
+            var myChart = echarts.init(dom);
+            var app = {};
+
+            option = null;
+            app.title = "柱状图";
+            option = {
+                title: {
+                    text: "柱状统计2",
+                    x: "center",
+                    y: "top"
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                legend: {
+                    orient: "horizontal",
+                    y: "bottom",
+                    bottom: 0,
+                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎', '百度', '谷歌', '必应', '其他']
+                },
+                grid: {
+                    top: 40,
+                    containLabel: true
+                },
+                xAxis: [{
+                    type: 'category',
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                }],
+                yAxis: [{
+                    type: 'value'
+                }],
+                series: [{
+                        name: '直接访问',
+                        type: 'bar',
+                        data: [320, 332, 301, 334, 390, 330, 320]
+                    },
+                    {
+                        name: '邮件营销',
+                        type: 'bar',
+                        stack: '广告',
+                        data: [120, 132, 101, 134, 90, 230, 210]
+                    },
+                    {
+                        name: '联盟广告',
+                        type: 'bar',
+                        stack: '广告',
+                        data: [220, 182, 191, 234, 290, 330, 310]
+                    },
+                    {
+                        name: '视频广告',
+                        type: 'bar',
+                        stack: '广告',
+                        data: [150, 232, 201, 154, 190, 330, 410]
+                    },
+                    {
+                        name: '搜索引擎',
+                        type: 'bar',
+                        data: [862, 1018, 964, 1026, 1679, 1600, 1570],
+                        markLine: {
+                            lineStyle: {
+                                normal: {
+                                    type: 'dashed'
+                                }
+                            },
+                            data: [
+                                [{
+                                    type: 'min'
+                                }, {
+                                    type: 'max'
+                                }]
+                            ]
+                        }
+                    },
+                    {
+                        name: '百度',
+                        type: 'bar',
+                        barWidth: 5,
+                        stack: '搜索引擎',
+                        data: [620, 732, 701, 734, 1090, 1130, 1120]
+                    },
+                    {
+                        name: '谷歌',
+                        type: 'bar',
+                        stack: '搜索引擎',
+                        data: [120, 132, 101, 134, 290, 230, 220]
+                    },
+                    {
+                        name: '必应',
+                        type: 'bar',
+                        stack: '搜索引擎',
+                        data: [60, 72, 71, 74, 190, 130, 110]
+                    },
+                    {
+                        name: '其他',
+                        type: 'bar',
+                        stack: '搜索引擎',
+                        data: [62, 82, 91, 84, 109, 110, 120]
+                    }
+                ]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        }
+
+        function createGauge() {
+            var dom = document.getElementById("gauge");
+            var myChart = echarts.init(dom);
+            var app = {};
+
+            option = null;
+            app.title = "仪表图";
+            option = {
+                tooltip: {
+                    formatter: "{a} <br />{b} : {c}%"
+                },
+                toolbox: {
+                    feature: {
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                series: [{
+                    name: '业务指标',
+                    type: 'gauge',
+                    axisLabel: { // 坐标轴小标记
+                        textStyle: { // 属性lineStyle控制线条样式
+                            fontWeight: 'normal'
+                        }
+                    },
+
+                    detail: {
+                        fontSize: 14,
+                        formatter: '{value}%'
+                    },
+                    data: [{
+                        value: 50,
+                        name: '完成率'
+                    }]
+                }]
+            };
+            if (option && typeof option === "object") {
+                option.series[0].data[0].value = (Math.random() * 100).toFixed(2) - 0;
+                myChart.setOption(option, true);
+            }
+        }
+    </script>
+</body>
+
+</html>

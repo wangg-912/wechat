@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0"" />
+    <meta name="copyright" content="All Rights Reserved, Copyright (C) 2013, Tellyes, Ltd."/>
+    <title>统一认证平台</title>
+    <script type="text/javascript">
+        // 跳转到整个界面显示登录界面，防止在iframe模块中出现登录界面
+        /* if(self!=top){
+            top.location.reload();
+        } */
+    </script>
+    <script src="./js/jquery-1.8.0.min.js" charset="utf-8"></script>
+    <script src="./js/jquery.cookie.js" charset="utf-8"></script>
+    <script src="./js/login.js" charset="utf-8"></script>
+
+</head>
+
+<body>
+<!-- 桌面端登录界面 -->
+<div id="desktopId" class="content-box" style="display:none;">
+    <div class="nav">
+        <div class="nav-title-box">
+            <div class="logo-box"></div>
+        </div>
+    </div>
+    <div class="form-box">
+        <p class="form-title">统一用户登录</p>
+        <form id="loginForm" action="/cas/login?service=http://cd.tellyes.com:8304/shiro-cas" method="post">
+            <input type="hidden" name="execution" value="f66ad04b-3e40-400b-b934-495cc2148191_ZXlKaGJHY2lPaUpJVXpVeE1pSjkuVVhCcU9WZ3diMWhHYlVwSWRXNW9VbVJNWlZscFprcHZWalpDWXpZM1ozZzJaR3M1TVVSTmVVRTVTa3RHV0VKMVkwMU5ZVEZMUkcxQllVMVFaWHB1TUhKalptUkNNSEEzZDJzck1WcERTbUUzTjFKaVVGQnJiMjFvV205elprMUxVSFpzWjA1cVlUZ3JiRmwwU1ZKYVNXazVPVkZSTTBNMmVuUldRMVpsTjJSR1ZGTnFZV2sxV2pKck1XRlBhQ3N6TVV4RVJHNU9Na3BRWjBKS04ycHJjMmdyV1hrdmRXWjBNMWhGVGxvNVpFcFlWVVIzZG5BeFNYUXhNamRKYTB4YVRFbFVWREpwWkRkeU5XMURXbVpGZG1Kc1UybFpjSFE0Vkc1aWNWcHZNM1JZWXk5cWFFWTBZMmMyVFcxMU9GSmxibFJsY2pKSFpXVXhjMmQwYjJSdGRXdEtVSEptTkcxaGFrczFPV3hUTUdsWmFHSmFUbTloTmxweFlUVTVlWFp0YW05VGQwOVBiRzF4Y0dZeUwyUlNORTV1ZUVvMFZqWkxVVU5hVVVSWmVXOXZSV1pVY0VscE5FaE5aREE1V0hwM1ZEaHJNVk5SWkRsdGJVWnRaR2hzYkRkSVNIcDFRVEUyTmtGM1RYQkdSRTk0UnpCQlowMHliVUpZV25OSFpXUlFPWFZCYlVKVFJtbFlWMUZLYkhVM1REZFJlRlZDUWs5MldTOVJUbmxvUVdFNWJ6UjNhV2MwTVhSWmVsaDRRMmd4ZUhobWRuTTJNMUZtWVd0dFpFTndSMGRVT0hKdk5WbGFObTVSUXk5SFNHRjVjbmRNYWxkS1dVNVpSRmcxU0RaQ05qRjRlVk54YmxWelduWkpSakZ6TVVsU05HcHNjMDFEU0VJeFowaFlRa3RZZGpKVFUyOTNjVkZpUzNkRlkzbDJaMGh3VTBrdlVWUk9TRVV6UVVod1FYZFNPVGc0VUVzMlVrRlZjRnBsVGs5UFpHNUZSMkYyZFdrNGNGQjVOV2hpUmt4c1JXeFphV05YWldoWVJXUnNObVJOU25ZelIwYzVOakV6YUhSTldVNXFORWRhVlVRdlQxbzNhV1Z6YlhKUGVuZE1kVEEyYVhaV01HdEpXVk5pWTFZNVJUWjZVRXB0ZEZGd1RTOHljbEpPUVVZd1l5OUtRbmg1V0RoamR6VjJibVpwYzBsdmEwRldOV0oxUVVsVFJIUmxTMHhYUmxNek4xUmpZVlJQZVcxaVdtUjFVR3RaVVZvMWExTXpkakpwY2toMmNTOVphRVJzVVZwd1ducE1iRko1WldsV1ZteHdOekZqUTBaV1p5OWxWbE5YYlVFMWNFODROWFJoZERFemJsWlRhbXQ2WjAxQ0x6WlhiRk5LZGxNeFZ5OVNRemx3T1VGVVQybHNiemswY0hOVVMyZENTbVJ6TjJWRVl6VlZNMHRIY0RCSWJuWTJZVGRaVERKUE1tbE1NbE5oY2pkcGVEWjFNRTk2VVdodVMyZGFTekpNU1RjclZHMVBSRk55TVdkeVNrOXZUbGxwU0hod1EzZEhaMmw2U1doblJFMDJjRWxHU2tKT09VbEdZMjAwUWpJMWVUTnFXSEJvYm5jM01HRXllVkp1Y1dkWGExRjRNR1JSUVdKYWIzaDVhMGhwTkZZd2RUa3Zlamt4ZVRJMVRVRldjV0ZyV25Wb1pUSnhOemRzUTNsSFVuWnZiSEJIWkdkSVFsZFBMemhuTDA5RFZuaGpZWEV6WWxKSWMwTjFUMmM1Um5CdWFIUjJjemRoYlc1MlowVjNVRVk0ZGxwcVkyTTJjMjlzVDNaVmNsRnBOWFZsZFdGMGJVOVhObEpGVkdKc1FWZDFjRzlITUc5TWIzRnFaRk5xZEcxMlYyNVZhVnBLWmtKSmIwdGxMelJ3YUVaS1ZqVmhjMWczTWpoTVYyWnNSRFoyUlZkNU5FUlFibnBPU210d2VFdEhLemRrTjBOU2NuUjJZM1ZUVEZweU5XbHlkM1kxT0RkWE5YVktVbGQ1VlVGdVVrdExRV1IyZEZJMGIzSXJlbE4wTVhndmR6VTFOalZVV2pOTGNFUldkbVpxWTFSTlIwUlBLMVJSUWxnek0wWlphVkJTS3psSlpVMXRhVU5zUlVWcU1qZG9jakJwVkVkaVUwSlJjMmRyYjNoQ2VIQldNelZVYUVkdFVXTnJVbXBTZG5wMmJHRkxPRnByWVRKU1VIQm9lVzRyV1ZCV2EwNU5NVVJYTm5CaVZIaGtkWGhoTnpGNFVIcFdZemgxYkVGUmQyZFdVa2x3ZUZCdFlsbHZaRUZTWkdoMmIycE5lbGw1ZEdabFUwTnVURXhMVUZKTGFFdEVVblJwU0VGbFVVWnNkbTFsU2twVlpYQnpVMHBwVjJ4a2NVZG1TRkUxVjBsb2RWSkdUWEJRT1RsMmFqazRUM1JvY0VvMlRVSlJiV3AwZFhob1VqZFlVbmQ0Y2pjeFQzTkVVMHRSVHpCT1ppdElWRUU1VkdWRGVHOUJUM0prU25SbWVHbFZTakYyWWtaelpTdDVNelZzTmpkdVdubEVjRVExVGtkbVRtZFZRbU5KWmpCUU5HSlhUMUUwTkcwM01ETmhNME5wTURFd1JHczRiRGMyVjJwUmQyVTRabkZ1WmpCYVZteFJOVTlaYjJaakswUktUMFUwWm1SS056azBTMlphVkhoaldqZExlVkV5THpKMkswVk1iblo2VkZkR1JqUXdSR1ZuU1ZCSWQyOUhaaTgwV1ZWRVlUZHBMMVpuU2tSaFZtMVNWME42WVRSc1JISnBSMVptWmpkS2NXRllkMEZLYW5BNUwxWlVWRE55U0doeksxbGxhR1Z1Vm01TVZHWm5VRkIxVUhjMU5YYzFVWGRuWTNoNE4ycGFZV0ZvWVd3NVQyVkhjWEpaV0VaaFpFcE9jVmhqTlVwWmRVcDBXV2RKY1U1d1kxUnliMFUxUkUweFlYaERSR1owTTB4aFRHMWlOV2hHVEcxWWJFaHNhMWhyWVRoemNsTjVTVGhUT0ROQ1prWnFabHBpWkRCaGRHNXRNeXRvTkRaVkwxZFdXVFpoV0hkWU5XSmxVMU50UkV4R09HSmlibUp5WlZseEwyOU5NM2xUVW5OWWNHeEhlRXRwYWxoUGRtMUdlVGd6YjBsR2MzcFRaRE5QWTJsNmFYZ3JOVVJ4ZUcxa09YWkphMk52VmxoWE0wWnpSVXRrUm1NMU9VTTVLekE1YkZOR1oxTk9TRzlPZGxaNFZFdHhVRVU0YUZodWFYRmliR3RNZDJZMFFtOWlkamc0ZW1WRlMyUmhlRUpDYUdSS2RtbHdjVE5qZFRkMk5XTjRObTVyUWl0RVNHeDNNRkp2WjBsYVdISnljVUowYlhCME5EWnpPR2g2WVd4WEsxSjRNMnh2YVRSMFJHdG1jbG93Wm14MWRWSlZNR2xEYW1oR05XOUJWVzQwWTBGeEwyNVVPRGswTXpWTlJsRkZSREZHTUZKaUwyVmpOV1ZPVW5aeFJUUnlZM2RpVWpOWWEycEZRekZHUVU1blRrOUxaVk5wTXpOQ1lWZ3lWRE5LYkRGcFZWRlBMekU1WjNZNFEwRlBhMlZMYjNkeGJWWlFVRUV2TldOdUsyUlZSbW9yYUdoUFNUZDZhQzlUT0dkclRUWlpOVlJ6WkN0SVpVZEhla3hKWW5sRVVUQlRTMm8xVURCRFdtWnpOMUl5ZGxFcmFWSkZlV1Z0TDBnNWNtOHhOVEJxTjNSUmJVSnJkVmwzYW5GSFNUZGlWemxJUkc4MmR6bDVWSHBXU1d0a05sRk1VbE5yZEd0bVV6UnBURzV1UjFRdlFuZEpSemx6T0hGMGNIQjNXbHBrWmpZNWFtZHNLMk51ZUVaTlRtcG5SVVpoT1NzNFRsUTBTek5DU1c1amNHMHlUMVl3WmtSS1JsazVhM051VkROWE5UYzNMMVZFYVRsQ1QwTlVaV1p4U0dGbkwxRjBSbmxVZVhCeE5VcFljMWRRYUU5dVlrNUtjRWgyWlM4eVkwUkpabXhrT0VkUmRrdGxVREozTlVvd1oyVlVkRVZ2T0hwd2MxTmlhMjB6V0hKUk5HazNVMU15TW5OaFlsaHBSV1JHWVhaeVZDOTNjblZzTjJOQmQxbE9iSFZLUkRBcmNVcFdiMDF4Y0VvMVdHaEhXV0pXVkRscGRFRkJVWGM1V0RCWmNYTmxkMFI0TW5kMWF6Y3hTbGhwU0dkQk1XczBOWEpMVFdaYVowaFhjakUxWkdGemJFZHJOMm93VXpSTE9Yb3pieTh6VnpkcWEyRTRkVmhwWjJKUWJDdEpkMVZrUWs1clNERnNTM05MYkVWek1scHFSSGQ0TVRGVE5UY3lWek5CYXl0NmFWTnRjMnRaUFEub2h2NWRFUVVaNmdORVc2dm9qQnJ5ZURtVzRaUjlWMXRSdjd2WmZ2SGNLbk1qUEhDSTNIeVZXTVktR0ZTamhJaF8xc1k2NjUtX05LUHNqTWlhY0FBc3c=" />
+            <input type="hidden" name="_eventId" value="submit" />
+            <div class="input-common name-box account-background">
+                <input id="userName" type="text" name="username"  autocomplete="off" placeholder="工号/身份证号/手机号" onkeydown="module.accountKeyDown(event)">
+            </div>
+            <div class="input-common word-box password-background password">
+
+                <input type="password"  style="display: none">
+                <input type="password"  style="position: absolute; top: -999px">
+
+                <input id="passWord" type="password"  name="password"  autocomplete="off" placeholder="密码" onkeydown="module.passwordKeyDown(event)">
+            </div>
+            <p id="errorMsg" class="errorMsg"></p>
+            <div>
+                <input type='checkbox'class="check-box" id="recordPassword" value = "1">
+                <label for="recordPassword" class="record-password">记住密码</label>
+
+            </div>
+            <input type="button" class="submit-btn" value="登录" onclick="module.submit()">
+        </form>
+        <div class="tips-box">
+            <p class="tip-title">温馨提示：</p>
+            <p class="tips-content">请各位教师、同学们牢记个人的统一身份认证账号和密码，如有丢失请联系图信中心 </p>
+        </div>
+    </div>
+    <div class="footer">
+        <p>四川省档案学校&天堰智汇&nbsp;版权所有&copy;2010-2020&nbsp;技术支持：15228876207</p>
+    </div>
+</div>
+
+<!-- 手机端登录界面 -->
+<div id="mobileId" class="page login-bg" style="display:none;">
+    <div class="logo"></div>
+    <form id="loginForm" class="weui-cells_form login-form" action="/cas/login?service=http://cd.tellyes.com:8304/shiro-cas" method="post">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label account-bg"></label>
+            </div>
+            <div class="weui-cell__bd">
+                <input name="username" class="weui-input"
+                       type="text" placeholder="请输入统一身份认证账号">
+            </div>
+        </div>
+
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label password-bg"></label>
+            </div>
+            <div class="weui-cell__bd">
+                <input name="password" class="weui-input"
+                       type="password" placeholder="请输入密码">
+            </div>
+        </div>
+        <div class="weui-cell"><p id="errorMsg" class="errorMsg"></p></div>
+        <div class="weui-btn-area">
+            <a id="submit" class="weui-btn weui-btn_primary weui-btn_disabled">登录</a>
+        </div>
+        <input type="hidden" name="execution" value="f66ad04b-3e40-400b-b934-495cc2148191_ZXlKaGJHY2lPaUpJVXpVeE1pSjkuVVhCcU9WZ3diMWhHYlVwSWRXNW9VbVJNWlZscFprcHZWalpDWXpZM1ozZzJaR3M1TVVSTmVVRTVTa3RHV0VKMVkwMU5ZVEZMUkcxQllVMVFaWHB1TUhKalptUkNNSEEzZDJzck1WcERTbUUzTjFKaVVGQnJiMjFvV205elprMUxVSFpzWjA1cVlUZ3JiRmwwU1ZKYVNXazVPVkZSTTBNMmVuUldRMVpsTjJSR1ZGTnFZV2sxV2pKck1XRlBhQ3N6TVV4RVJHNU9Na3BRWjBKS04ycHJjMmdyV1hrdmRXWjBNMWhGVGxvNVpFcFlWVVIzZG5BeFNYUXhNamRKYTB4YVRFbFVWREpwWkRkeU5XMURXbVpGZG1Kc1UybFpjSFE0Vkc1aWNWcHZNM1JZWXk5cWFFWTBZMmMyVFcxMU9GSmxibFJsY2pKSFpXVXhjMmQwYjJSdGRXdEtVSEptTkcxaGFrczFPV3hUTUdsWmFHSmFUbTloTmxweFlUVTVlWFp0YW05VGQwOVBiRzF4Y0dZeUwyUlNORTV1ZUVvMFZqWkxVVU5hVVVSWmVXOXZSV1pVY0VscE5FaE5aREE1V0hwM1ZEaHJNVk5SWkRsdGJVWnRaR2hzYkRkSVNIcDFRVEUyTmtGM1RYQkdSRTk0UnpCQlowMHliVUpZV25OSFpXUlFPWFZCYlVKVFJtbFlWMUZLYkhVM1REZFJlRlZDUWs5MldTOVJUbmxvUVdFNWJ6UjNhV2MwTVhSWmVsaDRRMmd4ZUhobWRuTTJNMUZtWVd0dFpFTndSMGRVT0hKdk5WbGFObTVSUXk5SFNHRjVjbmRNYWxkS1dVNVpSRmcxU0RaQ05qRjRlVk54YmxWelduWkpSakZ6TVVsU05HcHNjMDFEU0VJeFowaFlRa3RZZGpKVFUyOTNjVkZpUzNkRlkzbDJaMGh3VTBrdlVWUk9TRVV6UVVod1FYZFNPVGc0VUVzMlVrRlZjRnBsVGs5UFpHNUZSMkYyZFdrNGNGQjVOV2hpUmt4c1JXeFphV05YWldoWVJXUnNObVJOU25ZelIwYzVOakV6YUhSTldVNXFORWRhVlVRdlQxbzNhV1Z6YlhKUGVuZE1kVEEyYVhaV01HdEpXVk5pWTFZNVJUWjZVRXB0ZEZGd1RTOHljbEpPUVVZd1l5OUtRbmg1V0RoamR6VjJibVpwYzBsdmEwRldOV0oxUVVsVFJIUmxTMHhYUmxNek4xUmpZVlJQZVcxaVdtUjFVR3RaVVZvMWExTXpkakpwY2toMmNTOVphRVJzVVZwd1ducE1iRko1WldsV1ZteHdOekZqUTBaV1p5OWxWbE5YYlVFMWNFODROWFJoZERFemJsWlRhbXQ2WjAxQ0x6WlhiRk5LZGxNeFZ5OVNRemx3T1VGVVQybHNiemswY0hOVVMyZENTbVJ6TjJWRVl6VlZNMHRIY0RCSWJuWTJZVGRaVERKUE1tbE1NbE5oY2pkcGVEWjFNRTk2VVdodVMyZGFTekpNU1RjclZHMVBSRk55TVdkeVNrOXZUbGxwU0hod1EzZEhaMmw2U1doblJFMDJjRWxHU2tKT09VbEdZMjAwUWpJMWVUTnFXSEJvYm5jM01HRXllVkp1Y1dkWGExRjRNR1JSUVdKYWIzaDVhMGhwTkZZd2RUa3Zlamt4ZVRJMVRVRldjV0ZyV25Wb1pUSnhOemRzUTNsSFVuWnZiSEJIWkdkSVFsZFBMemhuTDA5RFZuaGpZWEV6WWxKSWMwTjFUMmM1Um5CdWFIUjJjemRoYlc1MlowVjNVRVk0ZGxwcVkyTTJjMjlzVDNaVmNsRnBOWFZsZFdGMGJVOVhObEpGVkdKc1FWZDFjRzlITUc5TWIzRnFaRk5xZEcxMlYyNVZhVnBLWmtKSmIwdGxMelJ3YUVaS1ZqVmhjMWczTWpoTVYyWnNSRFoyUlZkNU5FUlFibnBPU210d2VFdEhLemRrTjBOU2NuUjJZM1ZUVEZweU5XbHlkM1kxT0RkWE5YVktVbGQ1VlVGdVVrdExRV1IyZEZJMGIzSXJlbE4wTVhndmR6VTFOalZVV2pOTGNFUldkbVpxWTFSTlIwUlBLMVJSUWxnek0wWlphVkJTS3psSlpVMXRhVU5zUlVWcU1qZG9jakJwVkVkaVUwSlJjMmRyYjNoQ2VIQldNelZVYUVkdFVXTnJVbXBTZG5wMmJHRkxPRnByWVRKU1VIQm9lVzRyV1ZCV2EwNU5NVVJYTm5CaVZIaGtkWGhoTnpGNFVIcFdZemgxYkVGUmQyZFdVa2x3ZUZCdFlsbHZaRUZTWkdoMmIycE5lbGw1ZEdabFUwTnVURXhMVUZKTGFFdEVVblJwU0VGbFVVWnNkbTFsU2twVlpYQnpVMHBwVjJ4a2NVZG1TRkUxVjBsb2RWSkdUWEJRT1RsMmFqazRUM1JvY0VvMlRVSlJiV3AwZFhob1VqZFlVbmQ0Y2pjeFQzTkVVMHRSVHpCT1ppdElWRUU1VkdWRGVHOUJUM0prU25SbWVHbFZTakYyWWtaelpTdDVNelZzTmpkdVdubEVjRVExVGtkbVRtZFZRbU5KWmpCUU5HSlhUMUUwTkcwM01ETmhNME5wTURFd1JHczRiRGMyVjJwUmQyVTRabkZ1WmpCYVZteFJOVTlaYjJaakswUktUMFUwWm1SS056azBTMlphVkhoaldqZExlVkV5THpKMkswVk1iblo2VkZkR1JqUXdSR1ZuU1ZCSWQyOUhaaTgwV1ZWRVlUZHBMMVpuU2tSaFZtMVNWME42WVRSc1JISnBSMVptWmpkS2NXRllkMEZLYW5BNUwxWlVWRE55U0doeksxbGxhR1Z1Vm01TVZHWm5VRkIxVUhjMU5YYzFVWGRuWTNoNE4ycGFZV0ZvWVd3NVQyVkhjWEpaV0VaaFpFcE9jVmhqTlVwWmRVcDBXV2RKY1U1d1kxUnliMFUxUkUweFlYaERSR1owTTB4aFRHMWlOV2hHVEcxWWJFaHNhMWhyWVRoemNsTjVTVGhUT0ROQ1prWnFabHBpWkRCaGRHNXRNeXRvTkRaVkwxZFdXVFpoV0hkWU5XSmxVMU50UkV4R09HSmlibUp5WlZseEwyOU5NM2xUVW5OWWNHeEhlRXRwYWxoUGRtMUdlVGd6YjBsR2MzcFRaRE5QWTJsNmFYZ3JOVVJ4ZUcxa09YWkphMk52VmxoWE0wWnpSVXRrUm1NMU9VTTVLekE1YkZOR1oxTk9TRzlPZGxaNFZFdHhVRVU0YUZodWFYRmliR3RNZDJZMFFtOWlkamc0ZW1WRlMyUmhlRUpDYUdSS2RtbHdjVE5qZFRkMk5XTjRObTVyUWl0RVNHeDNNRkp2WjBsYVdISnljVUowYlhCME5EWnpPR2g2WVd4WEsxSjRNMnh2YVRSMFJHdG1jbG93Wm14MWRWSlZNR2xEYW1oR05XOUJWVzQwWTBGeEwyNVVPRGswTXpWTlJsRkZSREZHTUZKaUwyVmpOV1ZPVW5aeFJUUnlZM2RpVWpOWWEycEZRekZHUVU1blRrOUxaVk5wTXpOQ1lWZ3lWRE5LYkRGcFZWRlBMekU1WjNZNFEwRlBhMlZMYjNkeGJWWlFVRUV2TldOdUsyUlZSbW9yYUdoUFNUZDZhQzlUT0dkclRUWlpOVlJ6WkN0SVpVZEhla3hKWW5sRVVUQlRTMm8xVURCRFdtWnpOMUl5ZGxFcmFWSkZlV1Z0TDBnNWNtOHhOVEJxTjNSUmJVSnJkVmwzYW5GSFNUZGlWemxJUkc4MmR6bDVWSHBXU1d0a05sRk1VbE5yZEd0bVV6UnBURzV1UjFRdlFuZEpSemx6T0hGMGNIQjNXbHBrWmpZNWFtZHNLMk51ZUVaTlRtcG5SVVpoT1NzNFRsUTBTek5DU1c1amNHMHlUMVl3WmtSS1JsazVhM051VkROWE5UYzNMMVZFYVRsQ1QwTlVaV1p4U0dGbkwxRjBSbmxVZVhCeE5VcFljMWRRYUU5dVlrNUtjRWgyWlM4eVkwUkpabXhrT0VkUmRrdGxVREozTlVvd1oyVlVkRVZ2T0hwd2MxTmlhMjB6V0hKUk5HazNVMU15TW5OaFlsaHBSV1JHWVhaeVZDOTNjblZzTjJOQmQxbE9iSFZLUkRBcmNVcFdiMDF4Y0VvMVdHaEhXV0pXVkRscGRFRkJVWGM1V0RCWmNYTmxkMFI0TW5kMWF6Y3hTbGhwU0dkQk1XczBOWEpMVFdaYVowaFhjakUxWkdGemJFZHJOMm93VXpSTE9Yb3pieTh6VnpkcWEyRTRkVmhwWjJKUWJDdEpkMVZrUWs1clNERnNTM05MYkVWek1scHFSSGQ0TVRGVE5UY3lWek5CYXl0NmFWTnRjMnRaUFEub2h2NWRFUVVaNmdORVc2dm9qQnJ5ZURtVzRaUjlWMXRSdjd2WmZ2SGNLbk1qUEhDSTNIeVZXTVktR0ZTamhJaF8xc1k2NjUtX05LUHNqTWlhY0FBc3c=" />
+        <input type="hidden" name="_eventId" value="submit" />
+    </form>
+</div>
+</body>
+
+</html>

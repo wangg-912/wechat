@@ -1,0 +1,62 @@
+.accordion {
+    li {
+        border-bottom: 1px solid #ececec;
+    }
+
+    .iconfont {
+        font-size: 1.15rem;
+        padding-right: 4px;
+    }
+
+    .accordion-tit {
+        position: relative;
+
+        .weui-cell {
+            padding: 6px 10px;
+            height: 40px;
+            line-height: 40px;
+        }
+    }
+
+    .accordion-tit:after {
+        content: " ";
+        display: inline-block;
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg);
+        height: 6px;
+        width: 6px;
+        border-width: 2px 2px 0 0;
+        border-color: #c8c8cd;
+        border-style: solid;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        margin-top: -3px;
+    }
+
+    .weui-cells {
+        margin-top: 0;
+        display: none;
+        background: #ffffff;
+
+        .weui-cell {
+            padding: 6px 20px;
+            height: 36px;
+            line-height: 36px;
+        }
+    }
+
+    li.cur {
+        border-bottom: none;
+
+        .accordion-tit:after {
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+            margin-top: 0;
+        }
+
+        .weui-cells {
+            display: block;
+        }
+    }
+}

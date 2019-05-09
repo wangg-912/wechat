@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>两排列表</title>
+  <% include _head.html %>
+</head>
+<body ontouchstart>
+<article>
+  <% var data = [{title:'项目名称',projects:[{name: '成绩系统', number:3}, {name: 'oa项目', number: 0}, {name: '人事系统', number: 3}, {name: '人事系统', number: 3}, {name: '人事系统', number: 3},{name: '人事系统', number: 3},{name: '人事系统', number: 3}]},
+  {title:'项目名称2',projects:[{name: '铁路卫校', number: 1}, {name: 'oa项目', number: 2}, {name: '人事系统', number: 3}, {name: '人事系统', number: 3},{name: '人事系统', number: 3},{name: '人事系统', number: 3}]}] %>
+  <% if (data) { %>
+    <% data.forEach(function (item) { %>
+      <section>
+        <header class="weui-cells__title"><%= item.title %></header>
+        <div class="double-list">
+          <% item.projects.forEach(function (subItem, index) { %>
+            <% if (index == 5) { %>
+              <% if (item.projects.length==6) { %>
+                <div class="double-list__item">
+                  <div class="weui-cell">
+                    <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">
+                      <img src="images/pic_160.png" style="width: 30px;display: block">
+                      <% if (subItem.number > 0) { %>
+                        <span class="weui-badge" style="position: absolute;top: -.4em;right: -.4em;"><%= subItem.number %></span>
+                      <% } %>
+                    </div>
+                    <div class="weui-cell__bd">
+                      <span><%= subItem.name %></span>
+                    </div>
+                  </div>
+                </div>
+              <% } else { %>
+                <div class="double-list__item show-more">
+                  <div class="weui-cell">
+                    <p>更多...</p>
+                  </div>
+                </div>
+                <div class="double-list__item list-item__hide">
+                  <div class="weui-cell">
+                    <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">
+                      <img src="images/pic_160.png" style="width: 30px;display: block">
+                      <% if (subItem.number > 0) { %>
+                        <span class="weui-badge" style="position: absolute;top: -.4em;right: -.4em;"><%= subItem.number %></span>
+                      <% } %>
+                    </div>
+                    <div class="weui-cell__bd">
+                      <span><%= subItem.name %></span>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+              <% return false; %>
+            <% } else { %>
+              <div class="double-list__item <%= (index>=6?'list-item__hide':'') %>">
+                <div class="weui-cell">
+                  <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">
+                    <img src="images/pic_160.png" style="width: 30px;display: block">
+                    <% if (subItem.number > 0) { %>
+                      <span class="weui-badge" style="position: absolute;top: -.4em;right: -.4em;"><%= subItem.number %></span>
+                    <% } %>
+                  </div>
+                  <div class="weui-cell__bd">
+                    <span><%= subItem.name %></span>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          <% }) %>
+        </div>
+      </section>
+    <% }) %>
+  <% } %>
+</article>
+<% include _foot.html %>
+<script>
+  $(".show-more").on("click", function () {
+    $(this).hide().parent(".double-list").find(".list-item__hide").show();
+  })
+</script>
+</body>
+</html>

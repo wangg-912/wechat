@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WeUI</title>
+    <% include _head.html %>
+</head>
+
+<body ontouchstart>
+    <header class='demos-header'>
+        <h1 class="demos-title">Accordion</h1>
+    </header>
+    <ul class="accordion">
+        <li>
+            <div class="accordion-tit">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><i class="iconfont icon-wode"></i></div>
+                    <div class="weui-cell__bd">
+                        <p>我的好友（2/2）</p>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><i class="iconfont icon-wode"></i></div>
+                    <div class="weui-cell__bd">
+                        <p>标题文字</p>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><i class="iconfont icon-wode"></i></div>
+                    <div class="weui-cell__bd">
+                        <p>标题文字</p>
+                    </div>
+                    <div class="weui-cell__ft">说明文字</div>
+                </div>
+
+                <a class="weui-cell weui-cell_access" href="javascript:;">
+                    <div class="weui-cell__hd"><i class="iconfont icon-wode"></i></div>
+                    <div class="weui-cell__bd">
+                        <p>数据统计</p>
+                    </div>
+                    <div class="weui-cell__ft">
+                    </div>
+                </a>
+            </div>
+        </li>
+        <li>
+            <div class="accordion-tit">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><i class="iconfont icon-wode"></i></div>
+                    <div class="weui-cell__bd">
+                        <p>勾选框</p>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells weui-cells_checkbox">
+                <label class="weui-cell weui-check__label" for="s11">
+                    <div class="weui-cell__hd">
+                        <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked">
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p>勾选框1</p>
+                    </div>
+                </label>
+                <label class="weui-cell weui-check__label" for="s12">
+                    <div class="weui-cell__hd">
+                        <input type="checkbox" name="checkbox1" class="weui-check" id="s12">
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p>勾选框2</p>
+                    </div>
+                </label>
+            </div>
+        </li>
+        <li>
+            <div class="accordion-tit">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>我的好友（2/2）</p>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><i class="iconfont icon-wode"></i></div>
+                    <div class="weui-cell__bd">
+                        <p>标题文字</p>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><i class="iconfont icon-wode"></i></div>
+                    <div class="weui-cell__bd">
+                        <p>标题文字</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+    </ul>
+
+    <% include _foot.html %>
+    <script>
+        $('.accordion-tit').click(function () {
+            $parent = $(this).parent('li');
+            if ($parent.hasClass('cur')) {
+                $parent.removeClass('cur');
+                $parent.siblings().removeClass('cur');
+            } else {
+                $parent.addClass('cur');
+                $parent.siblings().removeClass('cur');
+            }
+        });
+    </script>
+</body>
+
+</html>
