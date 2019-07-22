@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WeUI</title>
+    <% include _head.html %>
+</head>
+
+<body ontouchstart>
+
+
+    <header class='demos-header'>
+        <h1 class="demos-title">Star</h1>
+    </header>
+
+    <section>
+        <div class="example">
+            <ul class="demo-option-score star"></ul>
+        </div>
+        <button class="get-star">获取分数</button>
+    </section>
+
+    <% include _foot.html %>
+
+    <script>
+        $('.demo-option-score').score({
+            score: 0,
+            size: 26,
+            /* readOnly: true */
+
+        });
+        $('.get-star').click(function () {
+            alert($('.demo-option-score').score('score'))
+        })
+    </script>
+</body>
+
+</html>

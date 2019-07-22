@@ -1,7 +1,7 @@
 /* global $:true */
 /* jshint unused:false*/
 
-+ function($) {
++ function ($) {
   "use strict";
 
 
@@ -11,7 +11,7 @@
     return n < 10 ? "0" + n : n;
   }
 
-  var Datetime = function(input, params) {
+  var Datetime = function (input, params) {
     this.input = $(input);
     this.params = params || {};
 
@@ -24,52 +24,52 @@
   }
 
   Datetime.prototype = {
-    getDays : function(max) {
+    getDays: function (max) {
       var days = [];
-      for(var i=1; i<= (max||31);i++) {
-        days.push(i < 10 ? "0"+i : i);
+      for (var i = 1; i <= (max || 31); i++) {
+        days.push(i < 10 ? "0" + i : i);
       }
       return days;
     },
 
-    getDaysByMonthAndYear : function(month, year) {
-      var int_d = new Date(year, parseInt(month)+1-1, 1);
+    getDaysByMonthAndYear: function (month, year) {
+      var int_d = new Date(year, parseInt(month) + 1 - 1, 1);
       var d = new Date(int_d - 1);
       return this.getDays(d.getDate());
     },
-    getConfig: function() {
+    getConfig: function () {
       var today = new Date(),
-          params = this.params,
-          self = this,
-          lastValidValues;
+        params = this.params,
+        self = this,
+        lastValidValues;
 
       var config = {
         rotateEffect: false,  //为了性能
         cssClass: 'datetime-picker',
 
-        value: [today.getFullYear(), formatNumber(today.getMonth()+1), formatNumber(today.getDate()), formatNumber(today.getHours()), (formatNumber(today.getMinutes()))],
+        value: [today.getFullYear(), formatNumber(today.getMonth() + 1), formatNumber(today.getDate()), formatNumber(today.getHours()), (formatNumber(today.getMinutes()))],
 
         onChange: function (picker, values, displayValues) {
           var cols = picker.cols;
           var days = self.getDaysByMonthAndYear(values[1], values[0]);
           var currentValue = values[2];
-          if(currentValue > days.length) currentValue = days.length;
+          if (currentValue > days.length) currentValue = days.length;
           picker.cols[4].setValue(currentValue);
 
           //check min and max
-          var current = new Date(values[0]+'-'+values[1]+'-'+values[2]);
+          var current = new Date(values[0] + '-' + values[1] + '-' + values[2]);
           var valid = true;
-          if(params.min) {
+          if (params.min) {
             var min = new Date(typeof params.min === "function" ? params.min() : params.min);
 
-            if(current < +min) {
+            if (current < +min) {
               picker.setValue(lastValidValues);
               valid = false;
-            } 
+            }
           }
-          if(params.max) {
+          if (params.max) {
             var max = new Date(typeof params.max === "function" ? params.max() : params.max);
-            if(current > +max) {
+            if (current > +max) {
               picker.setValue(lastValidValues);
               valid = false;
             }
@@ -104,11 +104,11 @@
           {
             values: (function () {
               var dates = [];
-              for (var i=1; i<=31; i++) dates.push(formatNumber(i));
+              for (var i = 1; i <= 31; i++) dates.push(formatNumber(i));
               return dates;
             })()
           },
-          
+
         ]
       }
 
@@ -130,8 +130,8 @@
       }
 
       var inputValue = this.input.val();
-      if(inputValue) config.value = params.parse(inputValue);
-      if(this.params.value) {
+      if (inputValue) config.value = params.parse(inputValue);
+      if (this.params.value) {
         this.input.val(this.params.value);
         config.value = params.parse(this.params.value);
       }
@@ -140,13 +140,13 @@
     }
   }
 
-  $.fn.datetimePicker = function(params) {
+  $.fn.datetimePicker = function (params) {
     params = $.extend({}, defaults, params);
-    return this.each(function() {
-      if(!this) return;
+    return this.each(function () {
+      if (!this) return;
       var $this = $(this);
       var datetime = $this.data("datetime");
-      if(!datetime) $this.data("datetime", new Datetime(this, params));
+      if (!datetime) $this.data("datetime", new Datetime(this, params));
       return datetime;
     });
   };
@@ -170,7 +170,7 @@
         {
           values: (function () {
             var hours = [];
-            for (var i=0; i<24; i++) hours.push(formatNumber(i));
+            for (var i = 0; i < 24; i++) hours.push(formatNumber(i));
             return hours;
           })()
         },
@@ -181,7 +181,7 @@
         {
           values: (function () {
             var minutes = [];
-            for (var i=0; i<60; i++) minutes.push(formatNumber(i));
+            for (var i = 0; i < 60; i++) minutes.push(formatNumber(i));
             return minutes;
           })()
         }
@@ -202,5 +202,6 @@
       })
     }
   }
+
 
 }($);

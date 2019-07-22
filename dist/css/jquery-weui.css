@@ -2463,3 +2463,63 @@ button.swiper-pagination-bullet {
 .accordion li.cur .weui-cells {
   display: block;
 }
+.star {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+.star > .iconfont.score-item,
+.star > .iconfont.score-item-static {
+  font-size: 26px;
+  display: inline-block;
+}
+.star > .score-item:hover {
+  cursor: pointer;
+}
+.star > .score-item:before {
+  content: "\e72a";
+  padding: 2px;
+}
+.star > .score-item.active:before {
+  content: "\e72a";
+  color: #ff9900;
+}
+.star > .score-item-static:hover {
+  cursor: default;
+}
+.star > .score-item-static:before {
+  content: "\e72a";
+  padding: 2px;
+}
+.star > .score-item-static.active:before {
+  content: "\e72a";
+  color: #ff9900;
+}
+.star .star > .iconfon.score-item {
+  font-size: 32px;
+  display: inline-block;
+}
+.star .star > .score-item,
+.star .star > .score-item-static {
+  font-family: iconfont;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+}
+.star .star.score-vertical > .score-item,
+.star .star.score-vertical > .score-item-static {
+  display: list-item;
+}
+.star .star > .score-item:hover:before,
+.star .star > .score-item:hover ~ .score-item:before {
+  content: "\e72a";
+  color: #ff9900;
+}
+.star .star > .score-item.active:before,
+.star .star > .score-item.active ~ .score-item:before {
+  content: "\e72a";
+  color: #ff9900;
+}

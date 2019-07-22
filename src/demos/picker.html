@@ -1,89 +1,150 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>WeUI</title>
-    <% include _head.html %>
-  </head>
 
-  <body ontouchstart>
+<head>
+  <title>WeUI</title>
+  <% include _head.html %>
+</head>
+
+<body ontouchstart>
 
 
-    <header class='demos-header'>
-      <h1 class="demos-title">Picker</h1>
-    </header>
+  <header class='demos-header'>
+    <h1 class="demos-title">Picker</h1>
+  </header>
 
-    
-    <div class="weui-cells weui-cells_form">
-      <div class="weui-cell">
-        <div class="weui-cell__hd"><label for="name" class="weui-label">称呼</label></div>
-        <div class="weui-cell__bd">
-          <input class="weui-input" id="name" type="text" value="">
-        </div>
-      </div>
-      <div class="weui-cell">
-        <div class="weui-cell__hd"><label for="date" class="weui-label">手机</label></div>
-        <div class="weui-cell__bd">
-          <input class="weui-input" id="mobile" type="text" value="">
-        </div>
+
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__hd"><label for="name" class="weui-label">称呼</label></div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="name" type="text" value="">
       </div>
     </div>
-
-    <div class="weui-cells weui-cells_form">
-      <div class="weui-cell">
-        <div class="weui-cell__hd"><label for="inline" class="weui-label">内联显示</label></div>
-        <div class="weui-cell__bd">
-          <input class="weui-input" id="inline" type="text" value="">
-        </div>
+    <div class="weui-cell">
+      <div class="weui-cell__hd"><label for="date" class="weui-label">手机</label></div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="mobile" type="text" value="">
       </div>
     </div>
-    <div id="picker-container"></div>
-    <% include _foot.html %>
+    <div class="weui-cell">
+      <div class="weui-cell__hd"><label for="date" class="weui-label">年月</label></div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="y_m" type="text" value="">
+      </div>
+    </div>
+  </div>
 
-    <script>
-      $("#mobile").picker({
-        title: "请选择您的手机",
-        cols: [
-          {
-            textAlign: 'center',
-            values: ['iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2', 'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3']
-          }
-        ],
-        onChange: function(p, v, dv) {
-          console.log(p, v, dv);
-        },
-        onClose: function(p, v, d) {
-          console.log("close");
-        }
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__hd"><label for="inline" class="weui-label">内联显示</label></div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="inline" type="text" value="">
+      </div>
+    </div>
+  </div>
+  <div id="picker-container"></div>
+  <% include _foot.html %>
+  <script>
+      /**
+       * 快速生成一个区间数组
+       * @param start
+       * @param end
+       * @param context
+       * @returns {string[]}
+       */
+    Array.prototype.range = function (start, end, context) {
+      var _self = this;
+      var length = end - start + 1;
+      var step = start - 1;
+      return Array.apply(null, {
+        length: length
+      }).map(function (v, i) {
+        step++;
+        var _m = (step < 10 ? '0' + step.toString() : step.toString());
+        return _m;
       });
-      $("#name").picker({
-        title: "怎么称呼您？",
-        cols: [
-          {
-            textAlign: 'center',
-            values: ['Mr', 'Ms']
-          },
-          {
-            textAlign: 'center',
-            values: ['Amy', 'Bob', 'Cat', 'Dog', 'Ella', 'Fox', 'Google']
-          }
+    }
+  </script>
+  <script>
+    $("#mobile").picker({
+      title: "请选择您的手机",
+      cols: [{
+        textAlign: 'center',
+        values: ['iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2',
+          'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3'
         ]
-      });
+      }],
+      onChange: function (p, v, dv) {
+        console.log(p, v, dv);
+      },
+      onClose: function (p, v, d) {
+        console.log("close");
+      }
+    });
+    var years = [];
+    var months = [];
 
-      $("#inline").picker({
-        container: '#picker-container',
-        cols: [
-          {
-            textAlign: 'center',
-            values: ['iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2', 'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3']
-          }
-        ],
-        onChange: function(p, v, dv) {
-          console.log(p, v, dv);
+    var _col = [{
+        textAlign: 'center',
+        values: years.range(1970, 2030)
+      },
+      {
+        divider: true, // 这是一个分隔符
+        content: '-'
+      },
+      {
+        textAlign: 'center',
+        values: months.range(1, 12)
+      }
+    ]
+
+    /**
+     * 年月控件
+     */
+    $("#y_m").picker({
+      title: "请选择年月",
+      cols: _col,
+      value: ['2019', '05'],
+      formatValue: function (p, values, displayValues) {
+        return _col.map(function (col) {
+          return col.value || col.content;
+        }).join('');
+      },
+      onClose: function (p) {
+        $(this.input).val((p.displayValue).join('-'))
+        //console.log(p.displayValue)
+      }
+    }).val('2019-05')
+    $("#name").picker({
+      title: "怎么称呼您？",
+      cols: [{
+          textAlign: 'center',
+          values: ['Mr', 'Ms']
         },
-        onClose: function(p, v, d) {
-          console.log("close");
+        {
+          textAlign: 'center',
+          values: ['Amy', 'Bob', 'Cat', 'Dog', 'Ella', 'Fox', 'Google']
         }
-      });
-    </script>
-  </body>
+      ]
+    });
+
+    $("#inline").picker({
+      container: '#picker-container',
+      cols: [{
+        textAlign: 'center',
+        values: ['iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2',
+          'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3'
+        ]
+      }],
+      onChange: function (p, v, dv) {
+        console.log(p, v, dv);
+      },
+      onClose: function (p, v, d) {
+        console.log("close");
+      }
+    });
+  </script>
+</body>
+
 </html>

@@ -1,52 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>WeUI</title>
-    <meta charset="utf-8">
+
+<head>
+  <title>WeUI</title>
+  <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <link rel="stylesheet" href="../lib/ui.css">
 <link rel="stylesheet" href="../css/jquery-weui.css">
 <link rel="stylesheet" href="../css/iconfont.min.css">
 <link rel="stylesheet" href="css/demos.css">
-  </head>
+</head>
 
-  <body ontouchstart>
-    <header class='demos-header'>
-      <h1 class="demos-title">Uploader</h1>
-    </header>
+<body ontouchstart>
+  <header class='demos-header'>
+    <h1 class="demos-title">Uploader</h1>
+  </header>
 
-    <div class="weui-cells weui-cells_form">
-      <div class="weui-cell">
-        <div class="weui-cell__bd">
-          <div class="weui-uploader">
-            <div class="weui-uploader__hd">
-              <p class="weui-uploader__title">图片上传</p>
-              <div class="weui-uploader__info">0/2</div>
-            </div>
-            <div class="weui-uploader__bd">
-              <ul class="weui-uploader__files" id="uploaderFiles">
-                <li class="weui-uploader__file" style="background-image:url(./images/pic_160.png)"></li>
-                <li class="weui-uploader__file" style="background-image:url(./images/pic_160.png)"></li>
-                <li class="weui-uploader__file" style="background-image:url(./images/pic_160.png)"></li>
-                <li class="weui-uploader__file weui-uploader__file_status" style="background-image:url(./images/pic_160.png)">
-                  <div class="weui-uploader__file-content">
-                    <i class="weui-icon-warn"></i>
-                  </div>
-                </li>
-                <li class="weui-uploader__file weui-uploader__file_status" style="background-image:url(./images/pic_160.png)">
-                  <div class="weui-uploader__file-content">50%</div>
-                </li>
-              </ul>
-              <div class="weui-uploader__input-box">
-                <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="">
-              </div>
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__bd">
+        <div class="weui-uploader">
+          <div class="weui-uploader__hd">
+            <p class="weui-uploader__title">图片上传</p>
+            <div class="weui-uploader__info">0/2</div>
+          </div>
+          <div class="weui-uploader__bd">
+            <ul class="weui-uploader__files" id="uploaderFiles">
+              <li class="weui-uploader__file" style="background-image:url(./images/pic_160.png)"></li>
+
+            </ul>
+            <div class="weui-uploader__input-box">
+              <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="">
             </div>
           </div>
         </div>
       </div>
     </div>
-    <script src="../lib/jquery-2.1.4.js"></script>
+  </div>
+  <script src="../lib/jquery-2.1.4.js"></script>
 <script src="../lib/fastclick.js"></script>
 <script>
   $(function () {
@@ -55,6 +47,104 @@
 </script>
 <script src="../js/jquery-weui.js"></script>
 <script src="../lib/qrcode.min.js"></script>
-<script src="../lib/helper/to-sjis.js"></script>
-  </body>
+<!-- <script src="../lib/helper/to-sjis.js"></script> -->
+  <script>
+    $(function () {
+      // 允许上传的图片类型
+      var allowTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+      // 1024KB，也就是 1MB
+      var maxSize = 2048 * 2048;
+      // 图片最大宽度
+      var maxWidth = 10000;
+      // 最大上传图片数量
+      var maxCount = 10;
+      $('#uploaderInput').on('change', function (event) {
+        var files = event.target.files;
+        //console.log(files);return false;
+        // 如果没有选中文件，直接返回
+        if (files.length === 0) {
+          return;
+        }
+
+        for (var i = 0, len = files.length; i < len; i++) {
+          var file = files[i];
+          var reader = new FileReader(); // 如果类型不在允许的类型范围内
+          if (allowTypes.indexOf(file.type) === -1) {
+            $.alert("文件类型不允许上传！", "警告！");
+            continue;
+          }
+          if (file.size > maxSize) {
+            //$.weui.alert({text: '图片太大，不允许上传'});
+            $.alert("图片太大，不允许上传", "警告！");
+            continue;
+          }
+
+          if ($('.weui-uploader__file').length >= maxCount) {
+            $.weui.alert({
+              text: '最多只能上传' + maxCount + '张图片'
+            });
+            return;
+          }
+          reader.readAsDataURL(file);
+          reader.onload = function (e) {
+            //console.log(e);
+            var img = new Image();
+            img.src = e.target.result;
+            img.onload = function () {
+              // 不要超出最大宽度
+              var w = Math.min(maxWidth, img.width);
+              // 高度按比例计算
+              var h = img.height * (w / img.width);
+              var canvas = document.createElement('canvas');
+              var ctx = canvas.getContext('2d');
+              // 设置 canvas 的宽度和高度
+              canvas.width = w;
+              canvas.height = h;
+              ctx.drawImage(img, 0, 0, w, h);
+
+              var base64 = canvas.toDataURL('image/jpeg', 0.8);
+              //console.log(base64);
+              // 插入到预览区
+              var $preview = $(
+                '<li class="weui-uploader__file weui-uploader__file_status"><div class = "weui-uploader__file-content">0 %</div></li>'
+              );
+              $('#uploaderFiles').append($preview);
+              $preview.css("background-image", "url(" + img.src + ")")
+              var num = $('.weui-uploader__file').length;
+              $('.weui-uploader__info').text(num + '/' + maxCount);
+
+
+              var formData = new FormData();
+
+              formData.append("images", base64);
+              //console.log(img.src);
+              //TODO 你的逻辑
+              /*  $.ajax({
+                 url: "http://weui.shanliwawa.top/php/upload.php",
+                 type: 'POST',
+                 data: formData,
+                 contentType: false,
+                 processData: false,
+                 success: function (data) {
+                   $preview.removeClass('weui-uploader__file_status');
+                   $.toast("上传成功", function () {
+                     //console.log('close');
+                   });
+                 },
+                 error: function (xhr, type) {
+                   alert('Ajax error!')
+                 }
+               }); */
+
+            };
+
+
+          };
+
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>

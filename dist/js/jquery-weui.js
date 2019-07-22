@@ -3998,686 +3998,686 @@ Device/OS Detection
 /* global $:true */
 /* jshint unused:false */
 /* jshint multistr:true */
-+ function($) {
-  "use strict";
-  var Picker = function (params) {
-      var p = this;
-      var defaults = {
-          updateValuesOnMomentum: false,
-          updateValuesOnTouchmove: true,
-          rotateEffect: false,
-          momentumRatio: 7,
-          freeMode: false,
-          // Common settings
-          scrollToInput: true,
-          inputReadOnly: true,
-          toolbar: true,
-          toolbarCloseText: '完成',
-          title: '请选择',
-          toolbarTemplate: '<div class="toolbar">\
++ function ($) {
+    "use strict";
+    var Picker = function (params) {
+        var p = this;
+        var defaults = {
+            updateValuesOnMomentum: false,
+            updateValuesOnTouchmove: true,
+            rotateEffect: false,
+            momentumRatio: 7,
+            freeMode: false,
+            // Common settings
+            scrollToInput: true,
+            inputReadOnly: true,
+            toolbar: true,
+            toolbarCloseText: '完成',
+            title: '请选择',
+            toolbarTemplate: '<div class="toolbar">\
           <div class="toolbar-inner">\
           <a href="javascript:;" class="picker-button close-picker">{{closeText}}</a>\
           <h1 class="title">{{title}}</h1>\
           </div>\
           </div>',
-      };
-      params = params || {};
-      for (var def in defaults) {
-          if (typeof params[def] === 'undefined') {
-              params[def] = defaults[def];
-          }
-      }
-      p.params = params;
-      p.cols = [];
-      p.initialized = false;
-      
-      // Inline flag
-      p.inline = p.params.container ? true : false;
-
-      // 3D Transforms origin bug, only on safari
-      var originBug = $.device.ios || (navigator.userAgent.toLowerCase().indexOf('safari') >= 0 && navigator.userAgent.toLowerCase().indexOf('chrome') < 0) && !$.device.android;
-
-      // Should be converted to popover
-      function isPopover() {
-          var toPopover = false;
-          if (!p.params.convertToPopover && !p.params.onlyInPopover) return toPopover;
-          if (!p.inline && p.params.input) {
-              if (p.params.onlyInPopover) toPopover = true;
-              else {
-                  if ($.device.ios) {
-                      toPopover = $.device.ipad ? true : false;
-                  }
-                  else {
-                      if ($(window).width() >= 768) toPopover = true;
-                  }
-              }
-          } 
-          return toPopover; 
-      }
-      function inPopover() {
-          if (p.opened && p.container && p.container.length > 0 && p.container.parents('.popover').length > 0) return true;
-          else return false;
-      }
-
-      // Value
-      p.setValue = function (arrValues, transition) {
-          var valueIndex = 0;
-          for (var i = 0; i < p.cols.length; i++) {
-              if (p.cols[i] && !p.cols[i].divider) {
-                  p.cols[i].setValue(arrValues[valueIndex], transition);
-                  valueIndex++;
-              }
-          }
-      };
-      p.updateValue = function () {
-          var newValue = [];
-          var newDisplayValue = [];
-          for (var i = 0; i < p.cols.length; i++) {
-              if (!p.cols[i].divider) {
-                  newValue.push(p.cols[i].value);
-                  newDisplayValue.push(p.cols[i].displayValue);
-              }
-          }
-          if (newValue.indexOf(undefined) >= 0) {
-              return;
-          }
-          p.value = newValue;
-          p.displayValue = newDisplayValue;
-          if (p.params.onChange) {
-              p.params.onChange(p, p.value, p.displayValue);
-          }
-          if (p.input && p.input.length > 0) {
-              $(p.input).val(p.params.formatValue ? p.params.formatValue(p, p.value, p.displayValue) : p.value.join(' '));
-              $(p.input).trigger('change');
-          }
-      };
-
-      // Columns Handlers
-      p.initPickerCol = function (colElement, updateItems) {
-          var colContainer = $(colElement);
-          var colIndex = colContainer.index();
-          var col = p.cols[colIndex];
-          if (col.divider) return;
-          col.container = colContainer;
-          col.wrapper = col.container.find('.picker-items-col-wrapper');
-          col.items = col.wrapper.find('.picker-item');
-          
-          var i, j;
-          var wrapperHeight, itemHeight, itemsHeight, minTranslate, maxTranslate;
-          col.replaceValues = function (values, displayValues) {
-              col.destroyEvents();
-              col.values = values;
-              col.displayValues = displayValues;
-              var newItemsHTML = p.columnHTML(col, true);
-              col.wrapper.html(newItemsHTML);
-              col.items = col.wrapper.find('.picker-item');
-              col.calcSize();
-              col.setValue(col.values[0] || '', 0, true);
-              col.initEvents();
-          };
-          col.calcSize = function () {
-              if (!col.values.length) return;
-              if (p.params.rotateEffect) {
-                  col.container.removeClass('picker-items-col-absolute');
-                  if (!col.width) col.container.css({width:''});
-              }
-              var colWidth, colHeight;
-              colWidth = 0;
-              colHeight = col.container[0].offsetHeight;
-              wrapperHeight = col.wrapper[0].offsetHeight;
-              itemHeight = col.items[0].offsetHeight;
-              itemsHeight = itemHeight * col.items.length;
-              minTranslate = colHeight / 2 - itemsHeight + itemHeight / 2;
-              maxTranslate = colHeight / 2 - itemHeight / 2;    
-              if (col.width) {
-                  colWidth = col.width;
-                  if (parseInt(colWidth, 10) === colWidth) colWidth = colWidth + 'px';
-                  col.container.css({width: colWidth});
-              }
-              if (p.params.rotateEffect) {
-                  if (!col.width) {
-                      col.items.each(function () {
-                          var item = $(this);
-                          item.css({width:'auto'});
-                          colWidth = Math.max(colWidth, item[0].offsetWidth);
-                          item.css({width:''});
-                      });
-                      col.container.css({width: (colWidth + 2) + 'px'});
-                  }
-                  col.container.addClass('picker-items-col-absolute');
-              }
-          };
-          col.calcSize();
-          
-          col.wrapper.transform('translate3d(0,' + maxTranslate + 'px,0)').transition(0);
-
-
-          var activeIndex = 0;
-          var animationFrameId;
-
-          // Set Value Function
-          col.setValue = function (newValue, transition, valueCallbacks) {
-              if (typeof transition === 'undefined') transition = '';
-              var newActiveIndex = col.wrapper.find('.picker-item[data-picker-value="' + newValue + '"]').index();
-              if(typeof newActiveIndex === 'undefined' || newActiveIndex === -1) {
-                  col.value = col.displayValue = newValue;
-                  return;
-              }
-              var newTranslate = -newActiveIndex * itemHeight + maxTranslate;
-              // Update wrapper
-              col.wrapper.transition(transition);
-              col.wrapper.transform('translate3d(0,' + (newTranslate) + 'px,0)');
-                  
-              // Watch items
-              if (p.params.updateValuesOnMomentum && col.activeIndex && col.activeIndex !== newActiveIndex ) {
-                  $.cancelAnimationFrame(animationFrameId);
-                  col.wrapper.transitionEnd(function(){
-                      $.cancelAnimationFrame(animationFrameId);
-                  });
-                  updateDuringScroll();
-              }
-
-              // Update items
-              col.updateItems(newActiveIndex, newTranslate, transition, valueCallbacks);
-          };
-
-          col.updateItems = function (activeIndex, translate, transition, valueCallbacks) {
-              if (typeof translate === 'undefined') {
-                  translate = $.getTranslate(col.wrapper[0], 'y');
-              }
-              if(typeof activeIndex === 'undefined') activeIndex = -Math.round((translate - maxTranslate)/itemHeight);
-              if (activeIndex < 0) activeIndex = 0;
-              if (activeIndex >= col.items.length) activeIndex = col.items.length - 1;
-              var previousActiveIndex = col.activeIndex;
-              col.activeIndex = activeIndex;
-              /*
-              col.wrapper.find('.picker-selected, .picker-after-selected, .picker-before-selected').removeClass('picker-selected picker-after-selected picker-before-selected');
-
-              col.items.transition(transition);
-              var selectedItem = col.items.eq(activeIndex).addClass('picker-selected').transform('');
-              var prevItems = selectedItem.prevAll().addClass('picker-before-selected');
-              var nextItems = selectedItem.nextAll().addClass('picker-after-selected');
-              */
-              //去掉 .picker-after-selected, .picker-before-selected 以提高性能
-              col.wrapper.find('.picker-selected').removeClass('picker-selected');
-              if (p.params.rotateEffect) {
-                col.items.transition(transition);
-              }
-              var selectedItem = col.items.eq(activeIndex).addClass('picker-selected').transform('');
-
-              if (valueCallbacks || typeof valueCallbacks === 'undefined') {
-                  // Update values
-                  col.value = selectedItem.attr('data-picker-value');
-                  col.displayValue = col.displayValues ? col.displayValues[activeIndex] : col.value;
-                  // On change callback
-                  if (previousActiveIndex !== activeIndex) {
-                      if (col.onChange) {
-                          col.onChange(p, col.value, col.displayValue);
-                      }
-                      p.updateValue();
-                  }
-              }
-                  
-              // Set 3D rotate effect
-              if (!p.params.rotateEffect) {
-                  return;
-              }
-              var percentage = (translate - (Math.floor((translate - maxTranslate)/itemHeight) * itemHeight + maxTranslate)) / itemHeight;
-              
-              col.items.each(function () {
-                  var item = $(this);
-                  var itemOffsetTop = item.index() * itemHeight;
-                  var translateOffset = maxTranslate - translate;
-                  var itemOffset = itemOffsetTop - translateOffset;
-                  var percentage = itemOffset / itemHeight;
-
-                  var itemsFit = Math.ceil(col.height / itemHeight / 2) + 1;
-                  
-                  var angle = (-18*percentage);
-                  if (angle > 180) angle = 180;
-                  if (angle < -180) angle = -180;
-                  // Far class
-                  if (Math.abs(percentage) > itemsFit) item.addClass('picker-item-far');
-                  else item.removeClass('picker-item-far');
-                  // Set transform
-                  item.transform('translate3d(0, ' + (-translate + maxTranslate) + 'px, ' + (originBug ? -110 : 0) + 'px) rotateX(' + angle + 'deg)');
-              });
-          };
-
-          function updateDuringScroll() {
-              animationFrameId = $.requestAnimationFrame(function () {
-                  col.updateItems(undefined, undefined, 0);
-                  updateDuringScroll();
-              });
-          }
-
-          // Update items on init
-          if (updateItems) col.updateItems(0, maxTranslate, 0);
-
-          var allowItemClick = true;
-          var isTouched, isMoved, touchStartY, touchCurrentY, touchStartTime, touchEndTime, startTranslate, returnTo, currentTranslate, prevTranslate, velocityTranslate, velocityTime;
-          function handleTouchStart (e) {
-              if (isMoved || isTouched) return;
-              e.preventDefault();
-              isTouched = true;
-              var position = $.getTouchPosition(e);
-              touchStartY = touchCurrentY = position.y;
-              touchStartTime = (new Date()).getTime();
-              
-              allowItemClick = true;
-              startTranslate = currentTranslate = $.getTranslate(col.wrapper[0], 'y');
-          }
-          function handleTouchMove (e) {
-              if (!isTouched) return;
-              e.preventDefault();
-              allowItemClick = false;
-              var position = $.getTouchPosition(e);
-              touchCurrentY = position.y;
-              if (!isMoved) {
-                  // First move
-                  $.cancelAnimationFrame(animationFrameId);
-                  isMoved = true;
-                  startTranslate = currentTranslate = $.getTranslate(col.wrapper[0], 'y');
-                  col.wrapper.transition(0);
-              }
-              e.preventDefault();
-
-              var diff = touchCurrentY - touchStartY;
-              currentTranslate = startTranslate + diff;
-              returnTo = undefined;
-
-              // Normalize translate
-              if (currentTranslate < minTranslate) {
-                  currentTranslate = minTranslate - Math.pow(minTranslate - currentTranslate, 0.8);
-                  returnTo = 'min';
-              }
-              if (currentTranslate > maxTranslate) {
-                  currentTranslate = maxTranslate + Math.pow(currentTranslate - maxTranslate, 0.8);
-                  returnTo = 'max';
-              }
-              // Transform wrapper
-              col.wrapper.transform('translate3d(0,' + currentTranslate + 'px,0)');
-
-              // Update items
-              col.updateItems(undefined, currentTranslate, 0, p.params.updateValuesOnTouchmove);
-              
-              // Calc velocity
-              velocityTranslate = currentTranslate - prevTranslate || currentTranslate;
-              velocityTime = (new Date()).getTime();
-              prevTranslate = currentTranslate;
-          }
-          function handleTouchEnd (e) {
-              if (!isTouched || !isMoved) {
-                  isTouched = isMoved = false;
-                  return;
-              }
-              isTouched = isMoved = false;
-              col.wrapper.transition('');
-              if (returnTo) {
-                  if (returnTo === 'min') {
-                      col.wrapper.transform('translate3d(0,' + minTranslate + 'px,0)');
-                  }
-                  else col.wrapper.transform('translate3d(0,' + maxTranslate + 'px,0)');
-              }
-              touchEndTime = new Date().getTime();
-              var velocity, newTranslate;
-              if (touchEndTime - touchStartTime > 300) {
-                  newTranslate = currentTranslate;
-              }
-              else {
-                  velocity = Math.abs(velocityTranslate / (touchEndTime - velocityTime));
-                  newTranslate = currentTranslate + velocityTranslate * p.params.momentumRatio;
-              }
-
-              newTranslate = Math.max(Math.min(newTranslate, maxTranslate), minTranslate);
-
-              // Active Index
-              var activeIndex = -Math.floor((newTranslate - maxTranslate)/itemHeight);
-
-              // Normalize translate
-              if (!p.params.freeMode) newTranslate = -activeIndex * itemHeight + maxTranslate;
-
-              // Transform wrapper
-              col.wrapper.transform('translate3d(0,' + (parseInt(newTranslate,10)) + 'px,0)');
-
-              // Update items
-              col.updateItems(activeIndex, newTranslate, '', true);
-
-              // Watch items
-              if (p.params.updateValuesOnMomentum) {
-                  updateDuringScroll();
-                  col.wrapper.transitionEnd(function(){
-                      $.cancelAnimationFrame(animationFrameId);
-                  });
-              }
-
-              // Allow click
-              setTimeout(function () {
-                  allowItemClick = true;
-              }, 100);
-          }
-
-          function handleClick(e) {
-              if (!allowItemClick) return;
-              $.cancelAnimationFrame(animationFrameId);
-              /*jshint validthis:true */
-              var value = $(this).attr('data-picker-value');
-              col.setValue(value);
-          }
-
-          col.initEvents = function (detach) {
-              var method = detach ? 'off' : 'on';
-              col.container[method]($.touchEvents.start, handleTouchStart);
-              col.container[method]($.touchEvents.move, handleTouchMove);
-              col.container[method]($.touchEvents.end, handleTouchEnd);
-              col.items[method]('click', handleClick);
-          };
-          col.destroyEvents = function () {
-              col.initEvents(true);
-          };
-
-          col.container[0].f7DestroyPickerCol = function () {
-              col.destroyEvents();
-          };
-
-          col.initEvents();
-
-      };
-      p.destroyPickerCol = function (colContainer) {
-          colContainer = $(colContainer);
-          if ('f7DestroyPickerCol' in colContainer[0]) colContainer[0].f7DestroyPickerCol();
-      };
-      // Resize cols
-      function resizeCols() {
-          if (!p.opened) return;
-          for (var i = 0; i < p.cols.length; i++) {
-              if (!p.cols[i].divider) {
-                  p.cols[i].calcSize();
-                  p.cols[i].setValue(p.cols[i].value, 0, false);
-              }
-          }
-      }
-      $(window).on('resize', resizeCols);
-
-      // HTML Layout
-      p.columnHTML = function (col, onlyItems) {
-          var columnItemsHTML = '';
-          var columnHTML = '';
-          if (col.divider) {
-              columnHTML += '<div class="picker-items-col picker-items-col-divider ' + (col.textAlign ? 'picker-items-col-' + col.textAlign : '') + ' ' + (col.cssClass || '') + '">' + col.content + '</div>';
-          }
-          else {
-              for (var j = 0; j < col.values.length; j++) {
-                  columnItemsHTML += '<div class="picker-item" data-picker-value="' + col.values[j] + '">' + (col.displayValues ? col.displayValues[j] : col.values[j]) + '</div>';
-              }
-              columnHTML += '<div class="picker-items-col ' + (col.textAlign ? 'picker-items-col-' + col.textAlign : '') + ' ' + (col.cssClass || '') + '"><div class="picker-items-col-wrapper">' + columnItemsHTML + '</div></div>';
-          }
-          return onlyItems ? columnItemsHTML : columnHTML;
-      };
-      p.layout = function () {
-          var pickerHTML = '';
-          var pickerClass = '';
-          var i;
-          p.cols = [];
-          var colsHTML = '';
-          for (i = 0; i < p.params.cols.length; i++) {
-              var col = p.params.cols[i];
-              colsHTML += p.columnHTML(p.params.cols[i]);
-              p.cols.push(col);
-          }
-          pickerClass = 'weui-picker-modal picker-columns ' + (p.params.cssClass || '') + (p.params.rotateEffect ? ' picker-3d' : '') + (p.params.cols.length === 1 ? ' picker-columns-single' : '');
-          pickerHTML =
-              '<div class="' + (pickerClass) + '">' +
-                  (p.params.toolbar ? p.params.toolbarTemplate.replace(/{{closeText}}/g, p.params.toolbarCloseText).replace(/{{title}}/g, p.params.title) : '') +
-                  '<div class="picker-modal-inner picker-items">' +
-                      colsHTML +
-                      '<div class="picker-center-highlight"></div>' +
-                  '</div>' +
-              '</div>';
-              
-          p.pickerHTML = pickerHTML;    
-      };
-
-      // Input Events
-      function openOnInput(e) {
-          e.preventDefault();
-          if (p.opened) return;
-          p.open();
-          if (p.params.scrollToInput && !isPopover()) {
-              var pageContent = p.input.parents('.content');
-              if (pageContent.length === 0) return;
-
-              var paddingTop = parseInt(pageContent.css('padding-top'), 10),
-                  paddingBottom = parseInt(pageContent.css('padding-bottom'), 10),
-                  pageHeight = pageContent[0].offsetHeight - paddingTop - p.container.height(),
-                  pageScrollHeight = pageContent[0].scrollHeight - paddingTop - p.container.height(),
-                  newPaddingBottom;
-              var inputTop = p.input.offset().top - paddingTop + p.input[0].offsetHeight;
-              if (inputTop > pageHeight) {
-                  var scrollTop = pageContent.scrollTop() + inputTop - pageHeight;
-                  if (scrollTop + pageHeight > pageScrollHeight) {
-                      newPaddingBottom = scrollTop + pageHeight - pageScrollHeight + paddingBottom;
-                      if (pageHeight === pageScrollHeight) {
-                          newPaddingBottom = p.container.height();
-                      }
-                      pageContent.css({'padding-bottom': (newPaddingBottom) + 'px'});
-                  }
-                  pageContent.scrollTop(scrollTop, 300);
-              }
-          }
-      }
-      function closeOnHTMLClick(e) {
-          if (inPopover()) return;
-          if (p.input && p.input.length > 0) {
-              if (e.target !== p.input[0] && $(e.target).parents('.weui-picker-modal').length === 0) p.close();
-          }
-          else {
-              if ($(e.target).parents('.weui-picker-modal').length === 0) p.close();   
-          }
-      }
-
-      if (p.params.input) {
-          p.input = $(p.params.input);
-          if (p.input.length > 0) {
-              if (p.params.inputReadOnly) p.input.prop('readOnly', true);
-              if (!p.inline) {
-                  p.input.on('click', openOnInput);    
-              }
-              if (p.params.inputReadOnly) {
-                  p.input.on('focus mousedown', function (e) {
-                      e.preventDefault();
-                  });
-              }
-          }
-              
-      }
-      
-      if (!p.inline) $('html').on('click', closeOnHTMLClick);
-
-      // Open
-      function onPickerClose() {
-          p.opened = false;
-          if (p.input && p.input.length > 0) p.input.parents('.page-content').css({'padding-bottom': ''});
-          if (p.params.onClose) p.params.onClose(p);
-
-          // Destroy events
-          p.container.find('.picker-items-col').each(function () {
-              p.destroyPickerCol(this);
-          });
-      }
-
-      p.opened = false;
-      p.open = function () {
-          var toPopover = isPopover();
-
-          if (!p.opened) {
-
-              // Layout
-              p.layout();
-
-              // Append
-              if (toPopover) {
-                  p.pickerHTML = '<div class="popover popover-picker-columns"><div class="popover-inner">' + p.pickerHTML + '</div></div>';
-                  p.popover = $.popover(p.pickerHTML, p.params.input, true);
-                  p.container = $(p.popover).find('.weui-picker-modal');
-                  $(p.popover).on('close', function () {
-                      onPickerClose();
-                  });
-              }
-              else if (p.inline) {
-                  p.container = $(p.pickerHTML);
-                  p.container.addClass('picker-modal-inline');
-                  $(p.params.container).append(p.container);
-              }
-              else {
-                  p.container = $($.openPicker(p.pickerHTML));
-                  $(p.container)
-                  .on('close', function () {
-                      onPickerClose();
-                  });
-              }
-
-              // Store picker instance
-              p.container[0].f7Picker = p;
-
-              // Init Events
-              p.container.find('.picker-items-col').each(function () {
-                  var updateItems = true;
-                  if ((!p.initialized && p.params.value) || (p.initialized && p.value)) updateItems = false;
-                  p.initPickerCol(this, updateItems);
-              });
-              
-              // Set value
-              if (!p.initialized) {
-                  if (p.params.value) {
-                      p.setValue(p.params.value, 0);
-                  }
-              }
-              else {
-                  if (p.value) p.setValue(p.value, 0);
-              }
-          }
-
-          // Set flag
-          p.opened = true;
-          p.initialized = true;
-
-          if (p.params.onOpen) p.params.onOpen(p);
-      };
-
-      // Close
-      p.close = function (force) {
-          if (!p.opened || p.inline) return;
-          if (inPopover()) {
-              $.closePicker(p.popover);
-              return;
-          }
-          else {
-              $.closePicker(p.container);
-              return;
-          }
-      };
-
-      // Destroy
-      p.destroy = function () {
-          p.close();
-          if (p.params.input && p.input.length > 0) {
-              p.input.off('click focus', openOnInput);
-              $(p.input).data('picker', null);
-          }
-          $('html').off('click', closeOnHTMLClick);
-          $(window).off('resize', resizeCols);
-      };
-
-      if (p.inline) {
-          p.open();
-      }
-
-      return p;
-  };
-
-  $(document).on("click", ".close-picker", function() {
-    var pickerToClose = $('.weui-picker-modal.weui-picker-modal-visible');
-    if (pickerToClose.length > 0) {
-      $.closePicker(pickerToClose);
-    }
-  });
-
-  //修复picker会滚动页面的bug
-  $(document).on($.touchEvents.move, ".picker-modal-inner", function(e) {
-    e.preventDefault();
-  });
-
-
-  $.openPicker = function(tpl, className, callback) {
-
-    if(typeof className === "function") {
-      callback = className;
-      className = undefined;
-    }
-
-    $.closePicker();
-
-    var container = $("<div class='weui-picker-container "+ (className || "") + "'></div>").appendTo(document.body);
-    container.show();
-
-    container.addClass("weui-picker-container-visible");
-
-    //关于布局的问题，如果直接放在body上，则做动画的时候会撑开body高度而导致滚动条变化。
-    var dialog = $(tpl).appendTo(container);
-    
-    dialog.width(); //通过取一次CSS值，强制浏览器不能把上下两行代码合并执行，因为合并之后会导致无法出现动画。
-
-    dialog.addClass("weui-picker-modal-visible");
-
-    callback && container.on("close", callback);
-
-    return dialog;
-  }
-
-  $.updatePicker = function(tpl) {
-    var container = $(".weui-picker-container-visible");
-    if(!container[0]) return false;
-
-    container.html("");
-
-    var dialog = $(tpl).appendTo(container);
-
-    dialog.addClass("weui-picker-modal-visible");
-
-    return dialog;
-  }
-
-  $.closePicker = function(container, callback) {
-    if(typeof container === "function") callback = container;
-    $(".weui-picker-modal-visible").removeClass("weui-picker-modal-visible").transitionEnd(function() {
-      $(this).parent().remove();
-      callback && callback();
-    }).trigger("close");
-  };
-
-  $.fn.picker = function(params) {
-    var args = arguments;
-    return this.each(function() {
-      if(!this) return;
-      var $this = $(this);
-      
-      var picker = $this.data("picker");
-      if(!picker) {
-        params = $.extend({ input: this }, params || {}) // https://github.com/lihongxun945/jquery-weui/issues/432
-        var inputValue = $this.val();
-        if(params.value === undefined && inputValue !== "") {
-          params.value = (params.cols && params.cols.length > 1) ? inputValue.split(" ") : [inputValue];
+        };
+        params = params || {};
+        for (var def in defaults) {
+            if (typeof params[def] === 'undefined') {
+                params[def] = defaults[def];
+            }
         }
-        var p = $.extend({input: this}, params);
-        picker = new Picker(p);
-        $this.data("picker", picker);
-      }
-      if(typeof params === typeof "a") {
-        picker[params].apply(picker, Array.prototype.slice.call(args, 1));
-      }
+        p.params = params;
+        p.cols = [];
+        p.initialized = false;
+
+        // Inline flag
+        p.inline = p.params.container ? true : false;
+
+        // 3D Transforms origin bug, only on safari
+        var originBug = $.device.ios || (navigator.userAgent.toLowerCase().indexOf('safari') >= 0 && navigator.userAgent.toLowerCase().indexOf('chrome') < 0) && !$.device.android;
+
+        // Should be converted to popover
+        function isPopover() {
+            var toPopover = false;
+            if (!p.params.convertToPopover && !p.params.onlyInPopover) return toPopover;
+            if (!p.inline && p.params.input) {
+                if (p.params.onlyInPopover) toPopover = true;
+                else {
+                    if ($.device.ios) {
+                        toPopover = $.device.ipad ? true : false;
+                    }
+                    else {
+                        if ($(window).width() >= 768) toPopover = true;
+                    }
+                }
+            }
+            return toPopover;
+        }
+        function inPopover() {
+            if (p.opened && p.container && p.container.length > 0 && p.container.parents('.popover').length > 0) return true;
+            else return false;
+        }
+
+        // Value
+        p.setValue = function (arrValues, transition) {
+            var valueIndex = 0;
+            for (var i = 0; i < p.cols.length; i++) {
+                if (p.cols[i] && !p.cols[i].divider) {
+                    p.cols[i].setValue(arrValues[valueIndex], transition);
+                    valueIndex++;
+                }
+            }
+        };
+        p.updateValue = function () {
+            var newValue = [];
+            var newDisplayValue = [];
+            for (var i = 0; i < p.cols.length; i++) {
+                if (!p.cols[i].divider) {
+                    newValue.push(p.cols[i].value);
+                    newDisplayValue.push(p.cols[i].displayValue);
+                }
+            }
+            if (newValue.indexOf(undefined) >= 0) {
+                return;
+            }
+            p.value = newValue;
+            p.displayValue = newDisplayValue;
+            if (p.params.onChange) {
+                p.params.onChange(p, p.value, p.displayValue);
+            }
+            if (p.input && p.input.length > 0) {
+                $(p.input).val(p.params.formatValue ? p.params.formatValue(p, p.value, p.displayValue) : p.value.join(' '));
+                $(p.input).trigger('change');
+            }
+        };
+
+        // Columns Handlers
+        p.initPickerCol = function (colElement, updateItems) {
+            var colContainer = $(colElement);
+            var colIndex = colContainer.index();
+            var col = p.cols[colIndex];
+            if (col.divider) return;
+            col.container = colContainer;
+            col.wrapper = col.container.find('.picker-items-col-wrapper');
+            col.items = col.wrapper.find('.picker-item');
+
+            var i, j;
+            var wrapperHeight, itemHeight, itemsHeight, minTranslate, maxTranslate;
+            col.replaceValues = function (values, displayValues) {
+                col.destroyEvents();
+                col.values = values;
+                col.displayValues = displayValues;
+                var newItemsHTML = p.columnHTML(col, true);
+                col.wrapper.html(newItemsHTML);
+                col.items = col.wrapper.find('.picker-item');
+                col.calcSize();
+                col.setValue(col.values[0] || '', 0, true);
+                col.initEvents();
+            };
+            col.calcSize = function () {
+                if (!col.values.length) return;
+                if (p.params.rotateEffect) {
+                    col.container.removeClass('picker-items-col-absolute');
+                    if (!col.width) col.container.css({ width: '' });
+                }
+                var colWidth, colHeight;
+                colWidth = 0;
+                colHeight = col.container[0].offsetHeight;
+                wrapperHeight = col.wrapper[0].offsetHeight;
+                itemHeight = col.items[0].offsetHeight;
+                itemsHeight = itemHeight * col.items.length;
+                minTranslate = colHeight / 2 - itemsHeight + itemHeight / 2;
+                maxTranslate = colHeight / 2 - itemHeight / 2;
+                if (col.width) {
+                    colWidth = col.width;
+                    if (parseInt(colWidth, 10) === colWidth) colWidth = colWidth + 'px';
+                    col.container.css({ width: colWidth });
+                }
+                if (p.params.rotateEffect) {
+                    if (!col.width) {
+                        col.items.each(function () {
+                            var item = $(this);
+                            item.css({ width: 'auto' });
+                            colWidth = Math.max(colWidth, item[0].offsetWidth);
+                            item.css({ width: '' });
+                        });
+                        col.container.css({ width: (colWidth + 2) + 'px' });
+                    }
+                    col.container.addClass('picker-items-col-absolute');
+                }
+            };
+            col.calcSize();
+
+            col.wrapper.transform('translate3d(0,' + maxTranslate + 'px,0)').transition(0);
+
+
+            var activeIndex = 0;
+            var animationFrameId;
+
+            // Set Value Function
+            col.setValue = function (newValue, transition, valueCallbacks) {
+                if (typeof transition === 'undefined') transition = '';
+                var newActiveIndex = col.wrapper.find('.picker-item[data-picker-value="' + newValue + '"]').index();
+                if (typeof newActiveIndex === 'undefined' || newActiveIndex === -1) {
+                    col.value = col.displayValue = newValue;
+                    return;
+                }
+                var newTranslate = -newActiveIndex * itemHeight + maxTranslate;
+                // Update wrapper
+                col.wrapper.transition(transition);
+                col.wrapper.transform('translate3d(0,' + (newTranslate) + 'px,0)');
+
+                // Watch items
+                if (p.params.updateValuesOnMomentum && col.activeIndex && col.activeIndex !== newActiveIndex) {
+                    $.cancelAnimationFrame(animationFrameId);
+                    col.wrapper.transitionEnd(function () {
+                        $.cancelAnimationFrame(animationFrameId);
+                    });
+                    updateDuringScroll();
+                }
+
+                // Update items
+                col.updateItems(newActiveIndex, newTranslate, transition, valueCallbacks);
+            };
+
+            col.updateItems = function (activeIndex, translate, transition, valueCallbacks) {
+                if (typeof translate === 'undefined') {
+                    translate = $.getTranslate(col.wrapper[0], 'y');
+                }
+                if (typeof activeIndex === 'undefined') activeIndex = -Math.round((translate - maxTranslate) / itemHeight);
+                if (activeIndex < 0) activeIndex = 0;
+                if (activeIndex >= col.items.length) activeIndex = col.items.length - 1;
+                var previousActiveIndex = col.activeIndex;
+                col.activeIndex = activeIndex;
+                /*
+                col.wrapper.find('.picker-selected, .picker-after-selected, .picker-before-selected').removeClass('picker-selected picker-after-selected picker-before-selected');
+  
+                col.items.transition(transition);
+                var selectedItem = col.items.eq(activeIndex).addClass('picker-selected').transform('');
+                var prevItems = selectedItem.prevAll().addClass('picker-before-selected');
+                var nextItems = selectedItem.nextAll().addClass('picker-after-selected');
+                */
+                //去掉 .picker-after-selected, .picker-before-selected 以提高性能
+                col.wrapper.find('.picker-selected').removeClass('picker-selected');
+                if (p.params.rotateEffect) {
+                    col.items.transition(transition);
+                }
+                var selectedItem = col.items.eq(activeIndex).addClass('picker-selected').transform('');
+
+                if (valueCallbacks || typeof valueCallbacks === 'undefined') {
+                    // Update values
+                    col.value = selectedItem.attr('data-picker-value');
+                    col.displayValue = col.displayValues ? col.displayValues[activeIndex] : col.value;
+                    // On change callback
+                    if (previousActiveIndex !== activeIndex) {
+                        if (col.onChange) {
+                            col.onChange(p, col.value, col.displayValue);
+                        }
+                        p.updateValue();
+                    }
+                }
+
+                // Set 3D rotate effect
+                if (!p.params.rotateEffect) {
+                    return;
+                }
+                var percentage = (translate - (Math.floor((translate - maxTranslate) / itemHeight) * itemHeight + maxTranslate)) / itemHeight;
+
+                col.items.each(function () {
+                    var item = $(this);
+                    var itemOffsetTop = item.index() * itemHeight;
+                    var translateOffset = maxTranslate - translate;
+                    var itemOffset = itemOffsetTop - translateOffset;
+                    var percentage = itemOffset / itemHeight;
+
+                    var itemsFit = Math.ceil(col.height / itemHeight / 2) + 1;
+
+                    var angle = (-18 * percentage);
+                    if (angle > 180) angle = 180;
+                    if (angle < -180) angle = -180;
+                    // Far class
+                    if (Math.abs(percentage) > itemsFit) item.addClass('picker-item-far');
+                    else item.removeClass('picker-item-far');
+                    // Set transform
+                    item.transform('translate3d(0, ' + (-translate + maxTranslate) + 'px, ' + (originBug ? -110 : 0) + 'px) rotateX(' + angle + 'deg)');
+                });
+            };
+
+            function updateDuringScroll() {
+                animationFrameId = $.requestAnimationFrame(function () {
+                    col.updateItems(undefined, undefined, 0);
+                    updateDuringScroll();
+                });
+            }
+
+            // Update items on init
+            if (updateItems) col.updateItems(0, maxTranslate, 0);
+
+            var allowItemClick = true;
+            var isTouched, isMoved, touchStartY, touchCurrentY, touchStartTime, touchEndTime, startTranslate, returnTo, currentTranslate, prevTranslate, velocityTranslate, velocityTime;
+            function handleTouchStart(e) {
+                if (isMoved || isTouched) return;
+                e.preventDefault();
+                isTouched = true;
+                var position = $.getTouchPosition(e);
+                touchStartY = touchCurrentY = position.y;
+                touchStartTime = (new Date()).getTime();
+
+                allowItemClick = true;
+                startTranslate = currentTranslate = $.getTranslate(col.wrapper[0], 'y');
+            }
+            function handleTouchMove(e) {
+                if (!isTouched) return;
+                e.preventDefault();
+                allowItemClick = false;
+                var position = $.getTouchPosition(e);
+                touchCurrentY = position.y;
+                if (!isMoved) {
+                    // First move
+                    $.cancelAnimationFrame(animationFrameId);
+                    isMoved = true;
+                    startTranslate = currentTranslate = $.getTranslate(col.wrapper[0], 'y');
+                    col.wrapper.transition(0);
+                }
+                e.preventDefault();
+
+                var diff = touchCurrentY - touchStartY;
+                currentTranslate = startTranslate + diff;
+                returnTo = undefined;
+
+                // Normalize translate
+                if (currentTranslate < minTranslate) {
+                    currentTranslate = minTranslate - Math.pow(minTranslate - currentTranslate, 0.8);
+                    returnTo = 'min';
+                }
+                if (currentTranslate > maxTranslate) {
+                    currentTranslate = maxTranslate + Math.pow(currentTranslate - maxTranslate, 0.8);
+                    returnTo = 'max';
+                }
+                // Transform wrapper
+                col.wrapper.transform('translate3d(0,' + currentTranslate + 'px,0)');
+
+                // Update items
+                col.updateItems(undefined, currentTranslate, 0, p.params.updateValuesOnTouchmove);
+
+                // Calc velocity
+                velocityTranslate = currentTranslate - prevTranslate || currentTranslate;
+                velocityTime = (new Date()).getTime();
+                prevTranslate = currentTranslate;
+            }
+            function handleTouchEnd(e) {
+                if (!isTouched || !isMoved) {
+                    isTouched = isMoved = false;
+                    return;
+                }
+                isTouched = isMoved = false;
+                col.wrapper.transition('');
+                if (returnTo) {
+                    if (returnTo === 'min') {
+                        col.wrapper.transform('translate3d(0,' + minTranslate + 'px,0)');
+                    }
+                    else col.wrapper.transform('translate3d(0,' + maxTranslate + 'px,0)');
+                }
+                touchEndTime = new Date().getTime();
+                var velocity, newTranslate;
+                if (touchEndTime - touchStartTime > 300) {
+                    newTranslate = currentTranslate;
+                }
+                else {
+                    velocity = Math.abs(velocityTranslate / (touchEndTime - velocityTime));
+                    newTranslate = currentTranslate + velocityTranslate * p.params.momentumRatio;
+                }
+
+                newTranslate = Math.max(Math.min(newTranslate, maxTranslate), minTranslate);
+
+                // Active Index
+                var activeIndex = -Math.floor((newTranslate - maxTranslate) / itemHeight);
+
+                // Normalize translate
+                if (!p.params.freeMode) newTranslate = -activeIndex * itemHeight + maxTranslate;
+
+                // Transform wrapper
+                col.wrapper.transform('translate3d(0,' + (parseInt(newTranslate, 10)) + 'px,0)');
+
+                // Update items
+                col.updateItems(activeIndex, newTranslate, '', true);
+
+                // Watch items
+                if (p.params.updateValuesOnMomentum) {
+                    updateDuringScroll();
+                    col.wrapper.transitionEnd(function () {
+                        $.cancelAnimationFrame(animationFrameId);
+                    });
+                }
+
+                // Allow click
+                setTimeout(function () {
+                    allowItemClick = true;
+                }, 100);
+            }
+
+            function handleClick(e) {
+                if (!allowItemClick) return;
+                $.cancelAnimationFrame(animationFrameId);
+                /*jshint validthis:true */
+                var value = $(this).attr('data-picker-value');
+                col.setValue(value);
+            }
+
+            col.initEvents = function (detach) {
+                var method = detach ? 'off' : 'on';
+                col.container[method]($.touchEvents.start, handleTouchStart);
+                col.container[method]($.touchEvents.move, handleTouchMove);
+                col.container[method]($.touchEvents.end, handleTouchEnd);
+                col.items[method]('click', handleClick);
+            };
+            col.destroyEvents = function () {
+                col.initEvents(true);
+            };
+
+            col.container[0].f7DestroyPickerCol = function () {
+                col.destroyEvents();
+            };
+
+            col.initEvents();
+
+        };
+        p.destroyPickerCol = function (colContainer) {
+            colContainer = $(colContainer);
+            if ('f7DestroyPickerCol' in colContainer[0]) colContainer[0].f7DestroyPickerCol();
+        };
+        // Resize cols
+        function resizeCols() {
+            if (!p.opened) return;
+            for (var i = 0; i < p.cols.length; i++) {
+                if (!p.cols[i].divider) {
+                    p.cols[i].calcSize();
+                    p.cols[i].setValue(p.cols[i].value, 0, false);
+                }
+            }
+        }
+        $(window).on('resize', resizeCols);
+
+        // HTML Layout
+        p.columnHTML = function (col, onlyItems) {
+            var columnItemsHTML = '';
+            var columnHTML = '';
+            if (col.divider) {
+                columnHTML += '<div class="picker-items-col picker-items-col-divider ' + (col.textAlign ? 'picker-items-col-' + col.textAlign : '') + ' ' + (col.cssClass || '') + '">' + col.content + '</div>';
+            }
+            else {
+                for (var j = 0; j < col.values.length; j++) {
+                    columnItemsHTML += '<div class="picker-item" data-picker-value="' + col.values[j] + '">' + (col.displayValues ? col.displayValues[j] : col.values[j]) + '</div>';
+                }
+                columnHTML += '<div class="picker-items-col ' + (col.textAlign ? 'picker-items-col-' + col.textAlign : '') + ' ' + (col.cssClass || '') + '"><div class="picker-items-col-wrapper">' + columnItemsHTML + '</div></div>';
+            }
+            return onlyItems ? columnItemsHTML : columnHTML;
+        };
+        p.layout = function () {
+            var pickerHTML = '';
+            var pickerClass = '';
+            var i;
+            p.cols = [];
+            var colsHTML = '';
+            for (i = 0; i < p.params.cols.length; i++) {
+                var col = p.params.cols[i];
+                colsHTML += p.columnHTML(p.params.cols[i]);
+                p.cols.push(col);
+            }
+            pickerClass = 'weui-picker-modal picker-columns ' + (p.params.cssClass || '') + (p.params.rotateEffect ? ' picker-3d' : '') + (p.params.cols.length === 1 ? ' picker-columns-single' : '');
+            pickerHTML =
+                '<div class="' + (pickerClass) + '">' +
+                (p.params.toolbar ? p.params.toolbarTemplate.replace(/{{closeText}}/g, p.params.toolbarCloseText).replace(/{{title}}/g, p.params.title) : '') +
+                '<div class="picker-modal-inner picker-items">' +
+                colsHTML +
+                '<div class="picker-center-highlight"></div>' +
+                '</div>' +
+                '</div>';
+
+            p.pickerHTML = pickerHTML;
+        };
+
+        // Input Events
+        function openOnInput(e) {
+            e.preventDefault();
+            if (p.opened) return;
+            p.open();
+            if (p.params.scrollToInput && !isPopover()) {
+                var pageContent = p.input.parents('.content');
+                if (pageContent.length === 0) return;
+
+                var paddingTop = parseInt(pageContent.css('padding-top'), 10),
+                    paddingBottom = parseInt(pageContent.css('padding-bottom'), 10),
+                    pageHeight = pageContent[0].offsetHeight - paddingTop - p.container.height(),
+                    pageScrollHeight = pageContent[0].scrollHeight - paddingTop - p.container.height(),
+                    newPaddingBottom;
+                var inputTop = p.input.offset().top - paddingTop + p.input[0].offsetHeight;
+                if (inputTop > pageHeight) {
+                    var scrollTop = pageContent.scrollTop() + inputTop - pageHeight;
+                    if (scrollTop + pageHeight > pageScrollHeight) {
+                        newPaddingBottom = scrollTop + pageHeight - pageScrollHeight + paddingBottom;
+                        if (pageHeight === pageScrollHeight) {
+                            newPaddingBottom = p.container.height();
+                        }
+                        pageContent.css({ 'padding-bottom': (newPaddingBottom) + 'px' });
+                    }
+                    pageContent.scrollTop(scrollTop, 300);
+                }
+            }
+        }
+        function closeOnHTMLClick(e) {
+            if (inPopover()) return;
+            if (p.input && p.input.length > 0) {
+                if (e.target !== p.input[0] && $(e.target).parents('.weui-picker-modal').length === 0) p.close();
+            }
+            else {
+                if ($(e.target).parents('.weui-picker-modal').length === 0) p.close();
+            }
+        }
+
+        if (p.params.input) {
+            p.input = $(p.params.input);
+            if (p.input.length > 0) {
+                if (p.params.inputReadOnly) p.input.prop('readOnly', true);
+                if (!p.inline) {
+                    p.input.on('click', openOnInput);
+                }
+                if (p.params.inputReadOnly) {
+                    p.input.on('focus mousedown', function (e) {
+                        e.preventDefault();
+                    });
+                }
+            }
+
+        }
+
+        if (!p.inline) $('html').on('click', closeOnHTMLClick);
+
+        // Open
+        function onPickerClose() {
+            p.opened = false;
+            if (p.input && p.input.length > 0) p.input.parents('.page-content').css({ 'padding-bottom': '' });
+            if (p.params.onClose) p.params.onClose(p);
+
+            // Destroy events
+            p.container.find('.picker-items-col').each(function () {
+                p.destroyPickerCol(this);
+            });
+        }
+
+        p.opened = false;
+        p.open = function () {
+            var toPopover = isPopover();
+
+            if (!p.opened) {
+
+                // Layout
+                p.layout();
+
+                // Append
+                if (toPopover) {
+                    p.pickerHTML = '<div class="popover popover-picker-columns"><div class="popover-inner">' + p.pickerHTML + '</div></div>';
+                    p.popover = $.popover(p.pickerHTML, p.params.input, true);
+                    p.container = $(p.popover).find('.weui-picker-modal');
+                    $(p.popover).on('close', function () {
+                        onPickerClose();
+                    });
+                }
+                else if (p.inline) {
+                    p.container = $(p.pickerHTML);
+                    p.container.addClass('picker-modal-inline');
+                    $(p.params.container).append(p.container);
+                }
+                else {
+                    p.container = $($.openPicker(p.pickerHTML));
+                    $(p.container)
+                        .on('close', function () {
+                            onPickerClose();
+                        });
+                }
+
+                // Store picker instance
+                p.container[0].f7Picker = p;
+
+                // Init Events
+                p.container.find('.picker-items-col').each(function () {
+                    var updateItems = true;
+                    if ((!p.initialized && p.params.value) || (p.initialized && p.value)) updateItems = false;
+                    p.initPickerCol(this, updateItems);
+                });
+
+                // Set value
+                if (!p.initialized) {
+                    if (p.params.value) {
+                        p.setValue(p.params.value, 0);
+                    }
+                }
+                else {
+                    if (p.value) p.setValue(p.value, 0);
+                }
+            }
+
+            // Set flag
+            p.opened = true;
+            p.initialized = true;
+
+            if (p.params.onOpen) p.params.onOpen(p);
+        };
+
+        // Close
+        p.close = function (force) {
+            if (!p.opened || p.inline) return;
+            if (inPopover()) {
+                $.closePicker(p.popover);
+                return;
+            }
+            else {
+                $.closePicker(p.container);
+                return;
+            }
+        };
+
+        // Destroy
+        p.destroy = function () {
+            p.close();
+            if (p.params.input && p.input.length > 0) {
+                p.input.off('click focus', openOnInput);
+                $(p.input).data('picker', null);
+            }
+            $('html').off('click', closeOnHTMLClick);
+            $(window).off('resize', resizeCols);
+        };
+
+        if (p.inline) {
+            p.open();
+        }
+
+        return p;
+    };
+
+    $(document).on("click", ".close-picker", function () {
+        var pickerToClose = $('.weui-picker-modal.weui-picker-modal-visible');
+        if (pickerToClose.length > 0) {
+            $.closePicker(pickerToClose);
+        }
     });
-  };
+
+    //修复picker会滚动页面的bug
+    $(document).on($.touchEvents.move, ".picker-modal-inner", function (e) {
+        e.preventDefault();
+    });
+
+
+    $.openPicker = function (tpl, className, callback) {
+
+        if (typeof className === "function") {
+            callback = className;
+            className = undefined;
+        }
+
+        $.closePicker();
+
+        var container = $("<div class='weui-picker-container " + (className || "") + "'></div>").appendTo(document.body);
+        container.show();
+
+        container.addClass("weui-picker-container-visible");
+
+        //关于布局的问题，如果直接放在body上，则做动画的时候会撑开body高度而导致滚动条变化。
+        var dialog = $(tpl).appendTo(container);
+
+        dialog.width(); //通过取一次CSS值，强制浏览器不能把上下两行代码合并执行，因为合并之后会导致无法出现动画。
+
+        dialog.addClass("weui-picker-modal-visible");
+
+        callback && container.on("close", callback);
+
+        return dialog;
+    }
+
+    $.updatePicker = function (tpl) {
+        var container = $(".weui-picker-container-visible");
+        if (!container[0]) return false;
+
+        container.html("");
+
+        var dialog = $(tpl).appendTo(container);
+
+        dialog.addClass("weui-picker-modal-visible");
+
+        return dialog;
+    }
+
+    $.closePicker = function (container, callback) {
+        if (typeof container === "function") callback = container;
+        $(".weui-picker-modal-visible").removeClass("weui-picker-modal-visible").transitionEnd(function () {
+            $(this).parent().remove();
+            callback && callback();
+        }).trigger("close");
+    };
+
+    $.fn.picker = function (params) {
+        var args = arguments;
+        return this.each(function () {
+            if (!this) return;
+            var $this = $(this);
+
+            var picker = $this.data("picker");
+            if (!picker) {
+                params = $.extend({ input: this }, params || {}) // https://github.com/lihongxun945/jquery-weui/issues/432
+                var inputValue = $this.val();
+                if (params.value === undefined && inputValue !== "") {
+                    params.value = (params.cols && params.cols.length > 1) ? inputValue.split(" ") : [inputValue];
+                }
+                var p = $.extend({ input: this }, params);
+                picker = new Picker(p);
+                $this.data("picker", picker);
+            }
+            if (typeof params === typeof "a") {
+                picker[params].apply(picker, Array.prototype.slice.call(args, 1));
+            }
+        });
+    };
 }($);
 
 /* global $:true */
@@ -4960,6 +4960,258 @@ Device/OS Detection
 
 }($);
 
+/*!
+ * Score.js - jQuery Star Rating Plugin
+ * Version: 0.0.1-beta
+ * Copyright 2013 Haozki
+ */
+
++(function ($) {
+    /* Note:
+        1.API方法中的this通通指向jQuery对象，回调函数以及私有方法中的this指向DOM对象
+        2.设置操作对所有选中的jQuery对象有效，获取操作只对jQuery对象集合中的第一个元素有效
+    */
+    var methods = {
+        /* 初始化插件 */
+        init: function (option) {
+            return this.each(function () {
+                var _this = this,
+                    $this = $(this);
+                option = this.option = $.extend({}, $.fn.score.defaults, $this.data(), option); // 在改变this.option时应该同步$(this).data('option')
+
+                // 保留一份原DOM对象的副本
+                this.raw = $(this).clone()[0];
+
+                var itemType = this.tagName === 'UL' ? 'li' : 'span';
+                var items = '';
+                for (var i = 0; i < option.number; i++) {
+                    var hint = option.number - i;
+                    if (option.hints) {
+                        hint = option.hints[hint - 1] ? option.hints[hint - 1] : hint;
+                    }
+                    items += '<' + itemType + ' class="iconfont score-item" title="' + hint + '"></' + itemType + '>';
+                }
+                $this.addClass('star').html(items).data('option', option)
+                    .css({
+                        'color': option.color
+                    }).find("li").css('font-size', option.size + 'px');
+
+                // 读取格式化为浏览器DOM Style对象中的格式
+                this.initStyle = {
+                    fontSize: $this.css('font-size'),
+                    color: $this.css('color')
+                };
+
+                /** 输出调试信息 **/
+                debug.call(_this, $this, 'Initialization OptionData: ', option); // 此处DOM上才有option属性，否则debug通过this读取不到debug配置项的值
+
+                if (option.readOnly) {
+                    methods.readOnly.call($this, true);
+                } else {
+                    methods._binds.call(_this);
+                }
+
+                if (option.vertical) {
+                    $this.addClass('score-vertical');
+                }
+
+                if (typeof Number(option.score) === 'number') {
+                    methods.score.call($this, Number(option.score));
+                }
+            });
+        },
+        /* 设置/返回分数 */
+        score: function (score) {
+            if (score) {
+                return this.each(function () {
+                    var option = this.option;
+                    score = score > option.number ? option.number : score;
+                    var index = option.number - score;
+                    $(this)
+                        .children()
+                        .removeClass('active')
+                        .eq(index)
+                        .addClass('active')
+                        .nextAll()
+                        .addClass('active')
+                        .end()
+                        .parent('.star')
+                        .data({
+                            'index': index,
+                            'score': score
+                        });
+
+                    /** 输出调试信息 **/
+                    debug.call(this, $(this), 'Score Set: ', score);
+                });
+            } else {
+                return this.data('score') || 0;  // 注意：API方法中的this统一指向jQuery对象
+            }
+        },
+        /* 设置/返回配置项 */
+        option: function (option) {
+            if (option) {
+                return this.each(function () {
+                    var oriOption = this.option;
+                    var newOption = $.extend({}, oriOption, option);
+
+                    methods.destroy.call($(this));
+                    methods.init.call($(this), newOption);
+
+                    /** 输出调试信息 **/
+                    debug.call(this, $(this), 'Option Set: ', option, 'Original Option: ', oriOption, 'New Option: ', newOption);
+                });
+            } else {
+                return this.data('option');  // 注意：API方法中的this统一指向jQuery对象
+            }
+        },
+        /* 设置为只读 */
+        readOnly: function (readOnly) {
+            return this.each(function () {
+                if (readOnly) {
+                    // 解绑后要还原之前的分数，做完mouseout该做的事，避免在hover过程中解绑了mouseout事件后鼠标再离开不能恢复之前的分数的问题
+                    $(this)
+                        .addClass('read-only')
+                        .off('.star')
+                        .children()
+                        .removeClass('score-item')
+                        .addClass('score-item-static')
+                        .eq($(this).data('index'))
+                        .addClass('active')
+                        .nextAll()
+                        .addClass('active');
+                } else {
+                    if ($(this).hasClass('read-only')) {
+                        $(this)
+                            .removeClass('read-only')
+                            .children()
+                            .removeClass('score-item-static')
+                            .addClass('score-item')
+
+                        methods._binds.call(this);
+                    }
+                }
+
+                /** 输出调试信息 **/
+                debug.call(this, $(this), 'readOnly:', readOnly);
+            });
+        },
+        /* 取消当前的评分 */
+        cancel: function () {
+            return this.each(function () {
+                $(this).removeData('index score').children().removeClass('active');
+
+                /** 输出调试信息 **/
+                debug.call(this, $(this), 'Canceled');
+            });
+        },
+        /* 销毁插件实例 */
+        destroy: function () {
+            return this.each(function () {
+                // !? 考虑是否需要还原style属性
+                $(this).off('.star').empty().removeClass('star read-only iconfont score-vertical').removeData('index score option');
+
+                // 如果当前style属性值与配置项不同，说明是初始化后在其他地方手动修改的，无需还原，否则要还原成初始化前已经设置的值
+                if (this.style.fontSize === this.initStyle.fontSize) {
+                    this.style.fontSize = this.raw.style.fontSize;
+                }
+                if (this.style.color === this.initStyle.color) {
+                    this.style.color = this.raw.style.color;
+                }
+                if ($(this).attr('style') === '') {
+                    $(this).removeAttr('style');
+                }
+
+                /** 输出调试信息 **/
+                debug.call(this, $(this), 'Destroyed'); // 要在delete this.option;之前输出调试，否则debug函数获取不到option
+
+                delete this.option;
+            });
+        },
+        /* 绑定插件事件 */
+        _binds: function () {
+            var _this = this,
+                $this = $(this),
+                option = this.option;
+            /* 注意: on事件绑定的函数中的this指向事件触发的DOM对象 */
+            $this.on({
+                'click.star': function (event) {
+                    var score = option.number - $(this).index();
+                    methods.score.call($this, score);
+
+                    // 触发回调函数
+                    setCallback.call(_this, event.type, score, event);
+                },
+                'mouseover.star': function (event) {
+                    var score = option.number - $(this).index();
+                    $this.children().removeClass('active');
+
+                    // 触发回调函数
+                    setCallback.call(_this, event.type, score, event);
+                },
+                'mouseout.star': function (event) {
+                    var score = methods.score.call($this);
+                    $this.children()
+                        .eq($(this).parent().data('index'))
+                        .addClass('active')
+                        .nextAll()
+                        .addClass('active');
+
+                    // 触发回调函数
+                    setCallback.call(_this, event.type, score, event);
+                }
+            }, '.score-item');
+        }
+    };
+
+    // 回调函数控制（this -> DOM）
+    function setCallback(callback) {
+        var callbackReference;
+        if (typeof this.option[callback] === 'function') {
+            callbackReference = this.option[callback];
+            this.option[callback].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else {
+            callbackReference = 'No callback function set';
+        }
+
+        /** 输出调试 */
+        debug.call(this, 'Callback Triggered: [', callback, '|', callbackReference, ']');
+    }
+
+    // 调试函数（this -> DOM）
+    function debug() {
+        if (this.option.debug) {
+            var logger = window.console['debug'];
+            if (typeof logger === 'function') {
+                logger.apply(window.console, arguments);
+            }
+        }
+    }
+
+    $.fn.score = function (option) {
+        if (methods[option]) {
+            return methods[option].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof option === "object" || !option) {
+            return methods.init.apply(this, arguments);
+        }
+        return false;
+    }
+
+    // 默认配置项
+    $.fn.score.defaults = {
+        number: 5,              // 评分范围
+        size: 26,             // 图标大小
+        color: '#c5c8ce',        // 图标颜色
+        score: undefined,      // 初始化时要设置的分数
+        vertical: false,          // 垂直模式
+        hints: undefined,      // 替换评分条目提示，例: ['bad', 'poor', 'regular', 'good', 'gorgeous']（默认是从1开始的阿拉伯数字）
+        click: undefined,      // Callback executed on click.
+        mouseover: undefined,      // Callback executed on mouseover.
+        mouseout: undefined,      // Callback executed on mouseout.
+        readOnly: false,          // 只读不能评分
+        debug: false           // 打开开发者调试
+    }
+})($);
 /*======================================================
 ************   Calendar   ************
 ======================================================*/
@@ -5863,7 +6115,7 @@ Device/OS Detection
 /* global $:true */
 /* jshint unused:false*/
 
-+ function($) {
++ function ($) {
   "use strict";
 
 
@@ -5873,7 +6125,7 @@ Device/OS Detection
     return n < 10 ? "0" + n : n;
   }
 
-  var Datetime = function(input, params) {
+  var Datetime = function (input, params) {
     this.input = $(input);
     this.params = params || {};
 
@@ -5886,52 +6138,52 @@ Device/OS Detection
   }
 
   Datetime.prototype = {
-    getDays : function(max) {
+    getDays: function (max) {
       var days = [];
-      for(var i=1; i<= (max||31);i++) {
-        days.push(i < 10 ? "0"+i : i);
+      for (var i = 1; i <= (max || 31); i++) {
+        days.push(i < 10 ? "0" + i : i);
       }
       return days;
     },
 
-    getDaysByMonthAndYear : function(month, year) {
-      var int_d = new Date(year, parseInt(month)+1-1, 1);
+    getDaysByMonthAndYear: function (month, year) {
+      var int_d = new Date(year, parseInt(month) + 1 - 1, 1);
       var d = new Date(int_d - 1);
       return this.getDays(d.getDate());
     },
-    getConfig: function() {
+    getConfig: function () {
       var today = new Date(),
-          params = this.params,
-          self = this,
-          lastValidValues;
+        params = this.params,
+        self = this,
+        lastValidValues;
 
       var config = {
         rotateEffect: false,  //为了性能
         cssClass: 'datetime-picker',
 
-        value: [today.getFullYear(), formatNumber(today.getMonth()+1), formatNumber(today.getDate()), formatNumber(today.getHours()), (formatNumber(today.getMinutes()))],
+        value: [today.getFullYear(), formatNumber(today.getMonth() + 1), formatNumber(today.getDate()), formatNumber(today.getHours()), (formatNumber(today.getMinutes()))],
 
         onChange: function (picker, values, displayValues) {
           var cols = picker.cols;
           var days = self.getDaysByMonthAndYear(values[1], values[0]);
           var currentValue = values[2];
-          if(currentValue > days.length) currentValue = days.length;
+          if (currentValue > days.length) currentValue = days.length;
           picker.cols[4].setValue(currentValue);
 
           //check min and max
-          var current = new Date(values[0]+'-'+values[1]+'-'+values[2]);
+          var current = new Date(values[0] + '-' + values[1] + '-' + values[2]);
           var valid = true;
-          if(params.min) {
+          if (params.min) {
             var min = new Date(typeof params.min === "function" ? params.min() : params.min);
 
-            if(current < +min) {
+            if (current < +min) {
               picker.setValue(lastValidValues);
               valid = false;
-            } 
+            }
           }
-          if(params.max) {
+          if (params.max) {
             var max = new Date(typeof params.max === "function" ? params.max() : params.max);
-            if(current > +max) {
+            if (current > +max) {
               picker.setValue(lastValidValues);
               valid = false;
             }
@@ -5966,11 +6218,11 @@ Device/OS Detection
           {
             values: (function () {
               var dates = [];
-              for (var i=1; i<=31; i++) dates.push(formatNumber(i));
+              for (var i = 1; i <= 31; i++) dates.push(formatNumber(i));
               return dates;
             })()
           },
-          
+
         ]
       }
 
@@ -5992,8 +6244,8 @@ Device/OS Detection
       }
 
       var inputValue = this.input.val();
-      if(inputValue) config.value = params.parse(inputValue);
-      if(this.params.value) {
+      if (inputValue) config.value = params.parse(inputValue);
+      if (this.params.value) {
         this.input.val(this.params.value);
         config.value = params.parse(this.params.value);
       }
@@ -6002,13 +6254,13 @@ Device/OS Detection
     }
   }
 
-  $.fn.datetimePicker = function(params) {
+  $.fn.datetimePicker = function (params) {
     params = $.extend({}, defaults, params);
-    return this.each(function() {
-      if(!this) return;
+    return this.each(function () {
+      if (!this) return;
       var $this = $(this);
       var datetime = $this.data("datetime");
-      if(!datetime) $this.data("datetime", new Datetime(this, params));
+      if (!datetime) $this.data("datetime", new Datetime(this, params));
       return datetime;
     });
   };
@@ -6032,7 +6284,7 @@ Device/OS Detection
         {
           values: (function () {
             var hours = [];
-            for (var i=0; i<24; i++) hours.push(formatNumber(i));
+            for (var i = 0; i < 24; i++) hours.push(formatNumber(i));
             return hours;
           })()
         },
@@ -6043,7 +6295,7 @@ Device/OS Detection
         {
           values: (function () {
             var minutes = [];
-            for (var i=0; i<60; i++) minutes.push(formatNumber(i));
+            for (var i = 0; i < 60; i++) minutes.push(formatNumber(i));
             return minutes;
           })()
         }
@@ -6064,6 +6316,7 @@ Device/OS Detection
       })
     }
   }
+
 
 }($);
 

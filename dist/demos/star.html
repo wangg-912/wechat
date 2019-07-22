@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>WeUI</title>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,20 +10,22 @@
 <link rel="stylesheet" href="../css/jquery-weui.css">
 <link rel="stylesheet" href="../css/iconfont.min.css">
 <link rel="stylesheet" href="css/demos.css">
-  </head>
+</head>
 
-  <body ontouchstart>
+<body ontouchstart>
 
 
     <header class='demos-header'>
-      <h1 class="demos-title">Toptip</h1>
+        <h1 class="demos-title">Star</h1>
     </header>
 
-    <div class='demos-content-padded'>
-      <a href="javascript:;" id='show-success' class="weui-btn weui-btn_primary">显示成功</a>
-      <a href="javascript:;" id='show-error' class="weui-btn weui-btn_primary">显示失败</a>
-      <a href="javascript:;" id='show-warning' class="weui-btn weui-btn_primary">显示警告</a>
-    </div>
+    <section>
+        <div class="example">
+            <ul class="demo-option-score star"></ul>
+        </div>
+        <button class="get-star">获取分数</button>
+    </section>
+
     <script src="../lib/jquery-2.1.4.js"></script>
 <script src="../lib/fastclick.js"></script>
 <script>
@@ -33,17 +36,18 @@
 <script src="../js/jquery-weui.js"></script>
 <script src="../lib/qrcode.min.js"></script>
 <!-- <script src="../lib/helper/to-sjis.js"></script> -->
+
     <script>
-      $(document)
-      .on('click', '#show-success', function() {
-        $.toptip('操作成功', 'success');
-      })
-      .on('click', '#show-error', function() {
-        $.toptip('操作失败', 'error');
-      })
-      .on('click', '#show-warning', function() {
-        $.toptip('警告', 'warning');
-      })
+        $('.demo-option-score').score({
+            score: 0,
+            size: 26,
+            /* readOnly: true */
+
+        });
+        $('.get-star').click(function () {
+            alert($('.demo-option-score').score('score'))
+        })
     </script>
-  </body>
+</body>
+
 </html>

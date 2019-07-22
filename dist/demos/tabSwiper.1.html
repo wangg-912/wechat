@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WeUI</title>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../lib/ui.css">
+<link rel="stylesheet" href="../css/jquery-weui.css">
+<link rel="stylesheet" href="../css/iconfont.min.css">
+<link rel="stylesheet" href="css/demos.css">
+    <link rel="stylesheet" href="../lib/swiper/swiper.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #topNav {
+            width: 100%;
+            overflow: hidden;
+            font: 16px/32px hiragino sans gb, microsoft yahei, simsun;
+            border-bottom: 1px solid #f8f8f8;
+        }
+
+        #topNav .swiper-slide {
+            padding: 0 5px;
+            letter-spacing: 2px;
+            width: 3rem;
+            text-align: center;
+        }
+
+        #topNav .swiper-slide span {
+
+            transition: all .3s ease;
+            display: block;
+        }
+
+        #topNav .active {
+            border-bottom: 2px solid red;
+        }
+
+        #topNav .active span {
+            transform: scale(1.1);
+            color: #FF2D2D;
+        }
+    </style>
+</head>
+
+<body ontouchstart>
+    <header class='demos-header'>
+        <h1 class="demos-title">Tabs Swiper</h1>
+    </header>
+    <div id="topNav" class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide active"><span>推荐</span></div>
+            <div class="swiper-slide"><span>热点</span></div>
+            <div class="swiper-slide"><span>深圳</span></div>
+            <div class="swiper-slide"><span>视频</span></div>
+            <div class="swiper-slide"><span>社会</span></div>
+            <div class="swiper-slide"><span>娱乐</span></div>
+            <div class="swiper-slide"><span>科技</span></div>
+            <div class="swiper-slide"><span>问答</span></div>
+            <div class="swiper-slide"><span>汽车</span></div>
+            <div class="swiper-slide"><span>财经</span></div>
+            <div class="swiper-slide"><span>军事</span></div>
+            <div class="swiper-slide"><span>体育</span></div>
+            <div class="swiper-slide"><span>段子</span></div>
+            <div class="swiper-slide"><span>美女</span></div>
+            <div class="swiper-slide"><span>国际</span></div>
+            <div class="swiper-slide"><span>趣图</span></div>
+            <div class="swiper-slide"><span>健康</span></div>
+            <div class="swiper-slide"><span>特产</span></div>
+            <div class="swiper-slide"><span>房产</span></div>
+        </div>
+    </div>
+
+    <script src="../lib/jquery-2.1.4.js"></script>
+<script src="../lib/fastclick.js"></script>
+<script>
+  $(function () {
+    FastClick.attach(document.body);
+  });
+</script>
+<script src="../js/jquery-weui.js"></script>
+<script src="../lib/qrcode.min.js"></script>
+<!-- <script src="../lib/helper/to-sjis.js"></script> -->
+    <script src="../js/swiper.min.js"></script>
+    <script src="https://cdn.bootcss.com/eruda/1.5.4/eruda.min.js"></script>
+    <script>
+        eruda.init();
+    </script>
+    <script>
+        var swiperWidth = $('body')[0].clientWidth;
+        $(function () {
+
+
+            var mySwiper = new Swiper('#topNav', {
+                freeMode: true,
+                freeModeMomentumRatio: 1,
+                slidesPerView: 'auto',
+
+
+            });
+            maxTranslate = mySwiper.maxTranslate();
+            maxWidth = -maxTranslate + swiperWidth / 2
+
+
+            $(".swiper-container").on('touchstart', function (e) {
+                e.preventDefault()
+            })
+            mySwiper.on('touchEnd', function (swiper, e) {
+                var $span = $(e.target),
+                    idx = $span.closest(".swiper-slide").index();
+                e.preventDefault()
+                slide = swiper.slides[idx]
+                slideLeft = slide.offsetLeft
+                slideWidth = slide.clientWidth
+                slideCenter = slideLeft + slideWidth / 2
+                // 被点击slide的中心点
+                mySwiper.setWrapperTransition(300)
+                if (slideCenter < swiperWidth / 2) {
+                    mySwiper.setWrapperTranslate(0)
+                } else if (slideCenter > maxWidth) {
+                    mySwiper.setWrapperTranslate(maxTranslate)
+                } else {
+                    nowTlanslate = slideCenter - swiperWidth / 2
+                    mySwiper.setWrapperTranslate(-nowTlanslate)
+                }
+                $("#topNav .active").removeClass('active')
+                $("#topNav .swiper-slide").eq(idx).addClass('active')
+            })
+
+
+        })
+    </script>
+
+</body>
+
+</html>

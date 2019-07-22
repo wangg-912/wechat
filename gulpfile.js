@@ -56,6 +56,7 @@ gulp.task('js', function (cb) {
       './src/js/device.js',
       './src/js/picker.js',
       './src/js/select.js',
+      './src/js/star.js',
       './src/js/calendar.js',
       './src/js/datetime-picker.js',
       './src/js/popup.js',
