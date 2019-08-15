@@ -25,7 +25,6 @@
         </div>
         <button class="get-star">获取分数</button>
     </section>
-
     <script src="../lib/jquery-2.1.4.js"></script>
 <script src="../lib/fastclick.js"></script>
 <script>
@@ -36,13 +35,11 @@
 <script src="../js/jquery-weui.js"></script>
 <script src="../lib/qrcode.min.js"></script>
 <!-- <script src="../lib/helper/to-sjis.js"></script> -->
-
     <script>
         $('.demo-option-score').score({
             score: 0,
             size: 26,
             /* readOnly: true */
-
         });
         $('.get-star').click(function () {
             alert($('.demo-option-score').score('score'))

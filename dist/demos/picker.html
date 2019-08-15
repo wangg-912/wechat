@@ -61,13 +61,13 @@
 <script src="../lib/qrcode.min.js"></script>
 <!-- <script src="../lib/helper/to-sjis.js"></script> -->
   <script>
-      /**
-       * 快速生成一个区间数组
-       * @param start
-       * @param end
-       * @param context
-       * @returns {string[]}
-       */
+    /**
+     * 快速生成一个区间数组
+     * @param start
+     * @param end
+     * @param context
+     * @returns {string[]}
+     */
     Array.prototype.range = function (start, end, context) {
       var _self = this;
       var length = end - start + 1;
@@ -128,7 +128,6 @@
       },
       onClose: function (p) {
         $(this.input).val((p.displayValue).join('-'))
-        //console.log(p.displayValue)
       }
     }).val('2019-05')
     $("#name").picker({

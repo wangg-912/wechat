@@ -90,7 +90,7 @@
 <!-- <script src="../lib/helper/to-sjis.js"></script> -->
 
   <script>
-    /* $("#time").datetimePicker({
+    $("#time").datetimePicker({
       title: '出发时间',
       min: "1990-12-12",
       max: "2022-12-12 12:12",
@@ -181,23 +181,14 @@
         console.log(values);
       }
     })
-    $("#years-monthes").datetimePicker({
+    $("#years-monthes").picker({
       title: '限定年月',
       years: [2017, 2018],
-      monthes: ['06', '07'],
+      monthes: ['01', '12'],
       onChange: function (picker, values, displayValues) {
         console.log(values);
       }
-    }); */
-    $("#only_years_monthes").datePicker({
-      title: '仅显示年月',
-      times: function () {
-        return [];
-      },
-      onChange: function (picker, values, displayValues) {
-        console.log(values);
-      }
-    })
+    });
   </script>
 </body>
 

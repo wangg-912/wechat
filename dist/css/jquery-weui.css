@@ -1204,7 +1204,7 @@ body {
   text-align: right;
 }
 .weui-picker-modal .picker-items-col.picker-items-col-divider {
-  color: #1c2438;
+  color: #2d8cf0;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
@@ -1236,9 +1236,10 @@ body {
   pointer-events: none;
 }
 .weui-picker-modal .picker-item.picker-selected {
-  color: #1c2438;
+  color: #2d8cf0;
   transform: translate3d(0, 0, 0);
   transform: rotateX(0deg);
+  font-weight: 500;
 }
 .weui-picker-modal .picker-center-highlight {
   height: 32px;
