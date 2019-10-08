@@ -34,7 +34,7 @@
 
       // Animating flag
       p.animating = false;
-
+      
       // Should be converted to popover
       function isPopover() {
           var toPopover = false;

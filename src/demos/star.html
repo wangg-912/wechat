@@ -19,15 +19,12 @@
         </div>
         <button class="get-star">获取分数</button>
     </section>
-
     <% include _foot.html %>
-
     <script>
         $('.demo-option-score').score({
             score: 0,
             size: 26,
             /* readOnly: true */
-
         });
         $('.get-star').click(function () {
             alert($('.demo-option-score').score('score'))
