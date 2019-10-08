@@ -1,0 +1,91 @@
+<!--
+ * @Description: 功能描述
+ * @Author: 作者
+ * @Date: 2019-10-08 11:04:58
+ * @LastEditors: 最后编辑人
+ * @LastEditTime: 2019-10-08 11:32:07
+ -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WeUI</title>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../lib/ui.css">
+<link rel="stylesheet" href="../css/jquery-weui.css">
+<link rel="stylesheet" href="../css/iconfont.min.css">
+<link rel="stylesheet" href="css/demos.css">
+    <style>
+        #signatureparent {
+            color: darkblue;
+            background-color: darkgrey;
+            /*max-width:600px;*/
+            padding: 10px;
+        }
+
+        /*This is the div within which the signature canvas is fitted*/
+        #signature {
+            height: 10em;
+            border: 1px dotted black;
+            background-color: lightgrey;
+        }
+
+        .button_sp_area {
+            text-align: center;
+        }
+
+        .weui-btn_mini {
+            text-align: center;
+            width: 48%;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body ontouchstart>
+
+
+    <header class='demos-header'>
+        <h1 class="demos-title">Signatrue</h1>
+    </header>
+    <div id="signatureparent">
+        <div id="signature"></div>
+    </div>
+    <div class="button_sp_area">
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary" id="save">保存并预览</a>
+        <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_default" id="reset">重置</a>
+    </div>
+    <img id="xx">
+    <script src="../lib/jquery-2.1.4.js"></script>
+<script src="../lib/fastclick.js"></script>
+<script>
+  $(function () {
+    FastClick.attach(document.body);
+  });
+</script>
+<script src="../js/jquery-weui.js"></script>
+<script src="../lib/qrcode.min.js"></script>
+<!-- <script src="../lib/helper/to-sjis.js"></script> -->
+    <script src="../lib/signature.min.js"></script>
+    <script>
+        $(function () {
+            $("#signature").jSignature();
+            eventHandler();
+        })
+
+        function eventHandler() {
+            $("#save").unbind("click").click(function () {
+                var data = $("#signature").jSignature('getData', 'default');
+                $("#xx").attr("src", data)
+            })
+            $("#reset").unbind("click").click(function () {
+                $("#xx").removeAttr("src")
+                $("#signature").jSignature("reset");
+            })
+        }
+    </script>
+</body>
+
+</html>
