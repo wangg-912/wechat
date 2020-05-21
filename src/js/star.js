@@ -173,6 +173,13 @@
                 option = this.option;
             /* 注意: on事件绑定的函数中的this指向事件触发的DOM对象 */
             $this.on({
+                'touchend.star': function (event) {
+                    var score = option.number - $(this).index();
+                    methods.score.call($this, $(this), score);
+
+                    // 触发回调函数
+                    setCallback.call(_this, event.type, score, event);
+                },
                 'click.star': function (event) {
                     var score = option.number - $(this).index();
                     methods.score.call($this, score);
